@@ -153,6 +153,11 @@
     .summary-number { margin-top: 10px; font-size: 23px; font-weight: 750; letter-spacing: -.8px; }
     .summary-number small { margin-left: 2px; color: var(--muted); font-size: 12px; font-weight: 550; letter-spacing: 0; }
     .summary-note { margin: 6px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; white-space: pre-line; }
+    .maintenance-alert { margin: 0 0 16px; padding: 14px 16px; border: 1px solid #efd59f; border-radius: 12px; background: #fff8e8; color: #765313; }
+    .maintenance-alert.overdue { border-color: #efc6c0; background: #fff1ef; color: #943f35; }
+    .maintenance-alert h3 { margin: 0; font-size: 13px; }
+    .maintenance-alert ul { display: grid; gap: 4px; margin: 8px 0 0; padding-left: 18px; font-size: 11px; line-height: 1.5; }
+    .maintenance-alert p { margin: 8px 0 0; font-size: 10px; opacity: .85; }
     .consumables-panel { margin: 0 0 24px; padding-bottom: 20px; }
     .consumables-heading { align-items: flex-start; }
     .average-note { color: var(--muted); font-size: 10px; text-align: right; }
@@ -409,7 +414,7 @@
           <div class="summary-number" id="serviceExpense">0<small>원</small></div>
         </article>
         <article class="summary-card">
-          <div class="summary-heading"><span>기타 유지비</span><span class="summary-icon amber" aria-hidden="true">＋</span></div>
+          <div class="summary-heading"><span>유지비 합계</span><span class="summary-icon amber" aria-hidden="true">＋</span></div>
           <div class="summary-number" id="otherExpense">0<small>원</small></div>
         </article>
       </section>
@@ -419,6 +424,7 @@
           <div><h2 class="panel-title" id="consumablesHeading">소모품 관리</h2><p class="panel-subtitle">거리 또는 기간 중 먼저 도래하는 기준 · 제조사 정비 지침을 우선 확인해 주세요.</p></div>
           <span class="average-note" id="monthlyAverageNote">월평균 주행거리 계산 중</span>
         </div>
+        <div class="maintenance-alert hidden" id="maintenanceAlert" role="status" aria-live="polite"></div>
         <div class="consumables-grid" id="consumablesGrid" aria-live="polite"></div>
       </section>
 
@@ -959,7 +965,7 @@
         const status = overdue ? "overdue" : warning ? "warning" : "ok";
         const label = overdue ? "교체 필요" : warning ? "주의" : "양호";
         const dueReason = overdue
-          ? [distanceOverdue ? "주행거리 초과" : "", timeOverdue ? "기간 초과" : ""].filter(Boolean).join(" · ")
+          ? [distanceOverdue ? (remaining < 0 ? "주행거리 초과" : "주행거리 교환 시점") : "", timeOverdue ? "기간 초과" : ""].filter(Boolean).join(" · ")
           : warning
             ? [distanceWarning ? "주행거리 임박" : "", timeWarning ? "기간 임박" : ""].filter(Boolean).join(" · ")
             : "";
@@ -971,10 +977,36 @@
 
       function renderConsumables() {
         const averageKm = getMonthlyMileageAverage();
+        const applicableItems = CONSUMABLES.filter((item) => isConsumableApplicable(item.id));
+        const statuses = applicableItems.map((item) => ({
+          item,
+          result: getConsumableStatus(item, getLatestConsumableChange(item.id), averageKm)
+        }));
+        const dueItems = statuses.filter(({ result }) => result.status === "overdue" || result.status === "warning");
+        const alert = $("#maintenanceAlert");
+        const hasOverdue = dueItems.some(({ result }) => result.status === "overdue");
+        alert.classList.toggle("hidden", dueItems.length === 0);
+        alert.classList.toggle("overdue", hasOverdue);
+        if (dueItems.length) {
+          alert.innerHTML = `<h3>${hasOverdue ? "교체 시기가 된 소모품을 확인해 주세요." : "정비 시기가 가까운 소모품이 있어요."}</h3>
+            <ul>${dueItems.map(({ item, result }) => {
+              const distance = result.remaining == null
+                ? ""
+                : result.remaining === 0
+                  ? " · 주행거리 기준 도래"
+                  : result.remaining < 0
+                    ? ` · ${formatNumber(Math.abs(result.remaining))} km 초과`
+                    : ` · ${formatNumber(result.remaining)} km 남음`;
+              return `<li><strong>${escapeHtml(item.name)} · ${escapeHtml(result.label)}</strong>: ${escapeHtml(result.detail)}${distance}</li>`;
+            }).join("")}</ul>
+            <p>현재 차량의 주행거리와 기록 날짜를 기준으로 표시합니다. 앱을 열었을 때 확인할 수 있으며, 브라우저가 닫혀 있을 때 푸시 알림은 보내지 않습니다.</p>`;
+        } else {
+          alert.innerHTML = "";
+        }
         $("#monthlyAverageNote").textContent = averageKm
           ? `월평균 약 ${formatNumber(Math.round(averageKm))} km`
           : "평균 계산에 날짜가 있는 주행거리 2건 이상 필요";
-        $("#consumablesGrid").innerHTML = CONSUMABLES.filter((item) => isConsumableApplicable(item.id)).map((item) => {
+        $("#consumablesGrid").innerHTML = applicableItems.map((item) => {
           const change = getLatestConsumableChange(item.id);
           const settings = getConsumableSettings(item);
           const result = getConsumableStatus(item, change, averageKm);
@@ -985,7 +1017,7 @@
             : result.remaining == null
               ? "기간 기준"
               : result.remaining <= 0
-                ? `${formatNumber(Math.abs(result.remaining))} km 초과`
+                ? result.remaining === 0 ? "교환 시점 도래" : `${formatNumber(Math.abs(result.remaining))} km 초과`
                 : `${formatNumber(result.remaining)} km`;
           const lastText = change
             ? `마지막 교환 ${formatDate(change.date)} · ${formatNumber(change.mileage)} km`
@@ -996,7 +1028,7 @@
           ].filter(Boolean).join(" 또는 ");
           return `<article class="consumable-card">
             <div class="consumable-top"><h3 class="consumable-name">${escapeHtml(item.name)}</h3><span class="status-badge ${result.status}">${result.label}</span></div>
-            <p class="consumable-remaining">${remainingText}${result.remaining != null ? "<small>남음</small>" : ""}</p>
+            <p class="consumable-remaining">${remainingText}${result.remaining > 0 ? "<small>남음</small>" : ""}</p>
             <p class="consumable-detail">${escapeHtml(result.detail)}<br>기준 ${escapeHtml(intervalText)}</p>
             <div class="consumable-footer"><span class="consumable-last">${escapeHtml(lastText)}</span><span><button class="text-button" type="button" data-maintenance-item="${item.id}">${change ? "기록 수정" : "기록"}</button><button class="text-button secondary" type="button" data-consumable-settings="${item.id}">알림 설정</button></span></div>
           </article>`;
@@ -1818,7 +1850,7 @@
           `총 지출: ${formatNumber(totals.total)}원`,
           `주유비: ${formatNumber(totals.fuel)}원`,
           `정비비: ${formatNumber(totals.service)}원`,
-          `기타 유지비: ${formatNumber(totals.expense)}원`,
+          `유지비 합계: ${formatNumber(totals.expense)}원`,
           `주입량 기록 합계: ${fuelDistanceEstimate ? `${formatNumber(fuelDistanceEstimate.recordedVolume.toFixed(1))} ${fuelDistanceEstimate.fuelUnit}` : "계산에 필요한 공인연비 표기 또는 주유량·충전량 기록 부족"}`,
           `공인연비 기준 환산 주행거리: ${fuelDistanceEstimate ? `약 ${formatNumber(fuelDistanceEstimate.distance)} km (추정)` : "계산 불가"}`,
           `1만원당 환산거리: ${fuelDistanceEstimate ? `약 ${formatNumber(Math.round(fuelDistanceEstimate.distancePerTenThousandWon))} km` : "계산 불가"}`,
@@ -1843,7 +1875,7 @@
             entry.volume ? `${entry.volume} ${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             entry.mileage != null ? `${formatNumber(entry.mileage)} km` : "",
             metrics?.efficiency ? `${metrics.efficiency.toFixed(1)} km/L` : "",
-            metrics?.unitPrice ? `${formatNumber(Math.round(metrics.unitPrice))}원/L` : "",
+            metrics?.unitPrice ? `${formatNumber(Math.round(metrics.unitPrice))}원/${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             entry.station ? `주유소/충전소 ${entry.station}` : entry.shop ? `정비소 ${entry.shop}` : "",
             entry.details || "",
             entry.memo || ""

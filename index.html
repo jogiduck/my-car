@@ -58,6 +58,10 @@
     h1 { margin: 0; font-size: 25px; letter-spacing: -1.1px; line-height: 1.35; }
     .welcome-copy { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
     .welcome-actions { display: flex; align-items: center; gap: 8px; }
+    .vehicle-switcher { display: flex; align-items: center; gap: 8px; margin: -7px 0 16px; }
+    .vehicle-switcher .input { width: min(320px, 100%); }
+    .vehicle-switcher .button-danger { color: #a44338; }
+    .vehicle-switcher .button:disabled { cursor: not-allowed; opacity: .5; }
     .mobile-label { display: none; }
     .recovery-banner {
       display: flex;
@@ -288,6 +292,9 @@
       .welcome-row { align-items: stretch; flex-direction: column; }
       .welcome-actions { justify-content: flex-end; }
       .welcome-actions .button { align-self: auto; padding: 0 10px; font-size: 11px; }
+      .vehicle-switcher { align-items: stretch; flex-wrap: wrap; margin-top: -10px; }
+      .vehicle-switcher .input { flex: 1 1 100%; width: 100%; }
+      .vehicle-switcher .button { flex: 1; }
       .desktop-label { display: none; }
       .mobile-label { display: inline; }
       .recovery-banner { align-items: flex-start; flex-direction: column; }
@@ -349,7 +356,13 @@
           <button class="button button-primary" id="focusEntryButton" type="button">＋ 내역 추가</button>
         </div>
       </section>
-      <p class="help-note">TXT는 메모장에서 읽는 요약본이고 복원은 JSON 백업으로 해요. 데이터는 브라우저와 사이트 주소별로 따로 저장되므로, Vercel 배포 후 기존 기록은 JSON으로 복원해 주세요.</p>
+      <section class="vehicle-switcher" aria-label="차량 선택 및 관리">
+        <label class="sr-only" for="vehicleSelect">관리할 차량 선택</label>
+        <select class="input" id="vehicleSelect" aria-label="관리할 차량 선택"></select>
+        <button class="button button-small" id="addVehicleButton" type="button">＋ 차량 추가</button>
+        <button class="button button-small button-danger" id="deleteVehicleButton" type="button">차량 삭제</button>
+      </section>
+      <p class="help-note">차량을 바꾸면 해당 차량의 기록만 보여요. JSON 백업에는 모든 차량이 포함되고, TXT는 현재 선택한 차량의 요약본이에요.</p>
       <section class="recovery-banner hidden" id="recoveryBanner" role="alert">
         <div><strong id="recoveryTitle">저장 데이터를 확인할 수 없습니다.</strong><p id="recoveryMessage"></p></div>
         <div class="recovery-actions">
@@ -610,6 +623,9 @@
         consumableChanges: [],
         consumableSettings: {}
       });
+      const createVehicleId = () => crypto.randomUUID
+        ? crypto.randomUUID()
+        : `vehicle-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       const EXPENSE_CATEGORIES = [
         { id: "insurance", name: "보험료" },
         { id: "tax", name: "자동차세·등록비" },
@@ -620,11 +636,14 @@
       ];
       let storageIssue = null;
       let recoveryText = null;
+      let vehicles = [];
+      let activeVehicleId = "";
       let data = loadData();
       let activeFilter = "all";
       let searchQuery = "";
       let sortNewestFirst = true;
       let editingId = null;
+      let creatingVehicle = false;
       let toastTimer;
 
       const $ = (selector) => document.querySelector(selector);
@@ -643,9 +662,24 @@
           storageIssue = "이 브라우저의 저장 공간에 접근할 수 없습니다. 저장 공간 설정을 확인하거나 새 차계부로 시작해 주세요.";
           return createEmptyData();
         }
-        if (!saved) return createEmptyData();
+        if (!saved) {
+          const emptyData = createEmptyData();
+          activeVehicleId = createVehicleId();
+          vehicles = [{ id: activeVehicleId, ...emptyData }];
+          return emptyData;
+        }
         try {
           const parsed = JSON.parse(saved);
+          if (isValidMultiVehicleData(parsed)) {
+            vehicles = parsed.vehicles.map((record) => {
+              const { id, ...vehicleData } = record;
+              return { id, ...normalizeData(vehicleData) };
+            });
+            activeVehicleId = parsed.activeVehicleId;
+            const activeRecord = vehicles.find((record) => record.id === activeVehicleId);
+            if (!activeRecord) throw new Error("선택된 차량 정보를 찾을 수 없습니다.");
+            return getVehicleData(activeRecord);
+          }
           if (!isValidData(parsed)) throw new Error("저장된 차계부 데이터 형식이 올바르지 않습니다.");
           if (parsed.entries.some((entry) => LEGACY_SAMPLE_IDS.has(entry.id))) {
             parsed.entries = parsed.entries.filter((entry) => !LEGACY_SAMPLE_IDS.has(entry.id));
@@ -653,13 +687,37 @@
               parsed.vehicle = createEmptyData().vehicle;
             }
           }
-          return normalizeData(parsed);
+          const legacyData = normalizeData(parsed);
+          activeVehicleId = createVehicleId();
+          vehicles = [{ id: activeVehicleId, ...legacyData }];
+          return legacyData;
         } catch (error) {
           console.error("차계부 데이터를 불러오지 못했습니다.", error);
           storageIssue = "저장된 데이터가 손상되었거나 호환되지 않습니다. 원본을 백업하거나 유효한 백업을 복원한 뒤 계속해 주세요.";
           recoveryText = saved;
           return createEmptyData();
         }
+      }
+
+      function getVehicleData(record) {
+        const { id, ...vehicleData } = record;
+        return JSON.parse(JSON.stringify(vehicleData));
+      }
+
+      function makeBackup(nextVehicles = vehicles, selectedId = activeVehicleId) {
+        return { version: 2, activeVehicleId: selectedId, vehicles: nextVehicles };
+      }
+
+      function isValidMultiVehicleData(value) {
+        if (!value || value.version !== 2 || !Array.isArray(value.vehicles) || !value.vehicles.length ||
+          typeof value.activeVehicleId !== "string") return false;
+        const ids = new Set();
+        return value.vehicles.every((record) => {
+          if (!record || typeof record.id !== "string" || !record.id || ids.has(record.id)) return false;
+          ids.add(record.id);
+          const { id, ...vehicleData } = record;
+          return isValidData(vehicleData);
+        }) && ids.has(value.activeVehicleId);
       }
 
       function normalizeData(value) {
@@ -759,7 +817,11 @@
           return false;
         }
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextData));
+          const nextVehicles = vehicles.map((record) =>
+            record.id === activeVehicleId ? { id: activeVehicleId, ...nextData } : record
+          );
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(makeBackup(nextVehicles)));
+          vehicles = nextVehicles;
           data = nextData;
           return true;
         } catch (error) {
@@ -827,6 +889,7 @@
           }
         });
         data.consumableChanges.forEach((change) => {
+          if (!isConsumableApplicable(change.itemId)) return;
           points.push({ date: change.date, mileage: Number(change.mileage) });
         });
         if (vehicle.mileageDate && Number.isFinite(Number(vehicle.mileage))) {
@@ -847,6 +910,10 @@
         const distance = last.mileage - first.mileage;
         if (months <= 0 || distance <= 0) return null;
         return distance / months;
+      }
+
+      function isConsumableApplicable(itemId) {
+        return itemId !== "lpgFilter" || data.vehicle.fuel === "LPG";
       }
 
       function getLatestConsumableChange(itemId) {
@@ -907,7 +974,7 @@
         $("#monthlyAverageNote").textContent = averageKm
           ? `월평균 약 ${formatNumber(Math.round(averageKm))} km`
           : "평균 계산에 날짜가 있는 주행거리 2건 이상 필요";
-        $("#consumablesGrid").innerHTML = CONSUMABLES.map((item) => {
+        $("#consumablesGrid").innerHTML = CONSUMABLES.filter((item) => isConsumableApplicable(item.id)).map((item) => {
           const change = getLatestConsumableChange(item.id);
           const settings = getConsumableSettings(item);
           const result = getConsumableStatus(item, change, averageKm);
@@ -1159,10 +1226,35 @@
       }
 
       function render() {
+        renderVehicleSelector();
         renderVehicle();
         renderSummary();
         renderConsumables();
         renderEntries();
+      }
+
+      function renderVehicleSelector() {
+        const selector = $("#vehicleSelect");
+        selector.innerHTML = vehicles.map((record) => {
+          const label = record.vehicle.name || record.vehicle.plate || "이름 없는 차량";
+          const plate = record.vehicle.plate && record.vehicle.name ? ` · ${record.vehicle.plate}` : "";
+          return `<option value="${escapeHtml(record.id)}">${escapeHtml(label + plate)}</option>`;
+        }).join("");
+        selector.value = activeVehicleId;
+        $("#deleteVehicleButton").disabled = vehicles.length <= 1;
+      }
+
+      function persistVehicleSet(nextVehicles, selectedId) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(makeBackup(nextVehicles, selectedId)));
+          vehicles = nextVehicles;
+          activeVehicleId = selectedId;
+          return true;
+        } catch (error) {
+          console.error("차량 목록을 저장하지 못했습니다.", error);
+          showToast("차량 정보를 저장하지 못했습니다. 브라우저 저장 공간 설정을 확인해 주세요.", true);
+          return false;
+        }
       }
 
       function setEntryType(type) {
@@ -1179,8 +1271,18 @@
         $("#expenseCategoryField").classList.toggle("hidden", type !== "expense");
         $("#expenseCategory").required = type === "expense";
         $("#entryCategory").required = type === "service";
+        updateServiceCategoryOptions();
         $("#serviceLinkNote").classList.toggle("hidden", type !== "service");
         updateFuelMetrics();
+      }
+
+      function updateServiceCategoryOptions() {
+        const lpgFilterOption = $("#entryCategory option[value='lpgFilter']");
+        lpgFilterOption.hidden = data.vehicle.fuel !== "LPG";
+        lpgFilterOption.disabled = data.vehicle.fuel !== "LPG";
+        if (data.vehicle.fuel !== "LPG" && !editingId && $("#entryCategory").value === "lpgFilter") {
+          $("#entryCategory").value = "engineOil";
+        }
       }
 
       function resetEntryForm() {
@@ -1363,7 +1465,9 @@
         }
       });
 
-      $("#editVehicleButton").addEventListener("click", () => {
+      function openVehicleDialogForEdit() {
+        creatingVehicle = false;
+        $("#vehicleDialogTitle").textContent = "차량 정보 수정";
         $("#carNameInput").value = data.vehicle.name || "";
         $("#carPlateInput").value = data.vehicle.plate || "";
         $("#carYearInput").value = data.vehicle.year || "";
@@ -1379,6 +1483,64 @@
         syncAcquisitionAndCurrentMileage();
         $("#carPurchaseDateInput").max = localToday();
         vehicleDialog.showModal();
+      }
+
+      $("#editVehicleButton").addEventListener("click", openVehicleDialogForEdit);
+
+      $("#addVehicleButton").addEventListener("click", () => {
+        creatingVehicle = true;
+        $("#vehicleDialogTitle").textContent = "차량 추가";
+        $("#carNameInput").value = "";
+        $("#carPlateInput").value = "";
+        $("#carYearInput").value = "";
+        $("#carFuelInput").value = "휘발유";
+        $("#carTrimInput").value = "";
+        $("#carTransmissionInput").value = "";
+        $("#carOfficialEconomyInput").value = "";
+        $("#carAcquisitionMileageInput").value = "";
+        $("#carMileageInput").value = "0";
+        $("#carPurchaseDateInput").value = "";
+        $("#carAcquisitionMileageInput").setCustomValidity("");
+        $("#carMileageInput").setCustomValidity("");
+        syncAcquisitionAndCurrentMileage();
+        $("#carPurchaseDateInput").max = localToday();
+        vehicleDialog.showModal();
+      });
+
+      $("#vehicleSelect").addEventListener("change", (event) => {
+        const selectedId = event.target.value;
+        const selectedVehicle = vehicles.find((record) => record.id === selectedId);
+        if (!selectedVehicle || selectedId === activeVehicleId) return;
+        if (editingId && !window.confirm("작성 중인 내역 수정을 취소하고 차량을 바꿀까요?")) {
+          event.target.value = activeVehicleId;
+          return;
+        }
+        if (!persistVehicleSet(vehicles, selectedId)) {
+          event.target.value = activeVehicleId;
+          return;
+        }
+        data = getVehicleData(selectedVehicle);
+        activeFilter = "all";
+        searchQuery = "";
+        $("#searchInput").value = "";
+        resetEntryForm();
+        render();
+      });
+
+      $("#deleteVehicleButton").addEventListener("click", () => {
+        if (vehicles.length <= 1) return;
+        const label = data.vehicle.name || data.vehicle.plate || "선택한 차량";
+        if (!window.confirm(`"${label}" 차량과 이 차량의 모든 주유·정비·유지비·소모품 기록을 삭제할까요? 삭제한 데이터는 복구할 수 없습니다.`)) return;
+        const nextVehicles = vehicles.filter((record) => record.id !== activeVehicleId);
+        const nextActiveId = nextVehicles[0].id;
+        if (!persistVehicleSet(nextVehicles, nextActiveId)) return;
+        data = getVehicleData(nextVehicles[0]);
+        activeFilter = "all";
+        searchQuery = "";
+        $("#searchInput").value = "";
+        resetEntryForm();
+        render();
+        showToast("차량과 해당 기록을 삭제했어요.");
       });
 
       function closeVehicleDialog() {
@@ -1434,27 +1596,41 @@
         );
         if (!form.reportValidity()) return;
         const fuel = $("#carFuelInput").value;
-        const nextData = {
-          ...data,
-          vehicle: {
-            name: $("#carNameInput").value.trim(),
-            plate: $("#carPlateInput").value.trim(),
-            year: $("#carYearInput").value,
-            fuel,
-            trim: $("#carTrimInput").value.trim(),
-            transmission: $("#carTransmissionInput").value,
-            officialEconomy: $("#carOfficialEconomyInput").value.trim() || null,
-            acquisitionMileage,
-            mileage,
-            purchaseDate: $("#carPurchaseDateInput").value,
-            mileageDate: mileage !== Number(data.vehicle.mileage) || !data.vehicle.mileageDate
-              ? localToday()
-              : data.vehicle.mileageDate,
-            fuelSinceDate: fuel === data.vehicle.fuel ? data.vehicle.fuelSinceDate : localToday()
-          }
+        const nextData = creatingVehicle ? createEmptyData() : JSON.parse(JSON.stringify(data));
+        nextData.vehicle = {
+          name: $("#carNameInput").value.trim(),
+          plate: $("#carPlateInput").value.trim(),
+          year: $("#carYearInput").value,
+          fuel,
+          trim: $("#carTrimInput").value.trim(),
+          transmission: $("#carTransmissionInput").value,
+          officialEconomy: $("#carOfficialEconomyInput").value.trim() || null,
+          acquisitionMileage,
+          mileage,
+          purchaseDate: $("#carPurchaseDateInput").value,
+          mileageDate: creatingVehicle || mileage !== Number(data.vehicle.mileage) || !data.vehicle.mileageDate
+            ? localToday()
+            : data.vehicle.mileageDate,
+          fuelSinceDate: creatingVehicle || fuel !== data.vehicle.fuel ? localToday() : data.vehicle.fuelSinceDate
         };
+        if (creatingVehicle) {
+          const newVehicleId = createVehicleId();
+          const nextVehicles = [...vehicles, { id: newVehicleId, ...nextData }];
+          if (!persistVehicleSet(nextVehicles, newVehicleId)) return;
+          data = nextData;
+          activeFilter = "all";
+          searchQuery = "";
+          $("#searchInput").value = "";
+          resetEntryForm();
+          render();
+          closeVehicleDialog();
+          creatingVehicle = false;
+          showToast("차량을 추가했어요. 이 차량만의 기록을 시작해 보세요.");
+          return;
+        }
         const saved = saveData(nextData);
         if (!saved) return;
+        updateServiceCategoryOptions();
         renderVehicle();
         renderSummary();
         renderConsumables();
@@ -1623,6 +1799,7 @@
         const lines = [
           "내 차 관리 - 차계부",
           `내보낸 날짜: ${localToday()}`,
+          `내보낸 차량: ${data.vehicle.name || "미등록"}`,
           "",
           "[차량 정보]",
           `차량명: ${data.vehicle.name || "미등록"}`,
@@ -1649,7 +1826,7 @@
           "",
           "[소모품 교환 기록]"
         ];
-        CONSUMABLES.forEach((item) => {
+        CONSUMABLES.filter((item) => isConsumableApplicable(item.id)).forEach((item) => {
           const change = getLatestConsumableChange(item.id);
           lines.push(`${item.name}: ${change ? `${change.date} / ${formatNumber(change.mileage)} km` : "기록 없음"}`);
         });
@@ -1689,14 +1866,14 @@
 
       $("#exportButton").addEventListener("click", () => {
         const timestamp = new Date().toISOString().slice(0, 10);
-        downloadJson(`차계부-백업-${timestamp}.json`, JSON.stringify(data, null, 2));
-        showToast("복원용 JSON 백업 파일을 내려받았어요.");
+        downloadJson(`차계부-전체차량-백업-${timestamp}.json`, JSON.stringify(makeBackup(), null, 2));
+        showToast("전체 차량의 복원용 JSON 백업 파일을 내려받았어요.");
       });
 
       $("#textExportButton").addEventListener("click", () => {
         const timestamp = new Date().toISOString().slice(0, 10);
         const text = `\uFEFF${buildTextExport()}`;
-        downloadBlob(`차계부-내역-${timestamp}.txt`, new Blob([text], { type: "text/plain;charset=utf-8" }));
+        downloadBlob(`차계부-${data.vehicle.name || "차량"}-내역-${timestamp}.txt`, new Blob([text], { type: "text/plain;charset=utf-8" }));
         showToast("메모장에서 읽을 수 있는 TXT 내역을 저장했어요.");
       });
 
@@ -1717,19 +1894,30 @@
           showToast("올바른 JSON 백업 파일이 아닙니다.", true);
           return;
         }
-        if (!isValidData(restored)) {
+        let restoredVehicles;
+        let restoredActiveId;
+        if (isValidMultiVehicleData(restored)) {
+          restoredVehicles = restored.vehicles.map((record) => {
+            const { id, ...vehicleData } = record;
+            return { id, ...normalizeData(vehicleData) };
+          });
+          restoredActiveId = restored.activeVehicleId;
+        } else if (isValidData(restored)) {
+          restoredActiveId = createVehicleId();
+          restoredVehicles = [{ id: restoredActiveId, ...normalizeData(restored) }];
+        } else {
           showToast("차계부 백업 형식이 올바르지 않아 복원하지 않았습니다.", true);
           return;
         }
-        if (!window.confirm("현재 차계부를 백업 파일의 내용으로 바꿀까요? 현재 내용은 백업되지 않으면 복구할 수 없습니다.")) return;
+        if (!window.confirm("현재 차계부의 모든 차량과 기록을 백업 파일의 내용으로 바꿀까요? 현재 내용은 백업되지 않으면 복구할 수 없습니다.")) return;
         storageIssue = null;
         recoveryText = null;
-        const saved = saveData(normalizeData(restored));
-        if (!saved) {
+        if (!persistVehicleSet(restoredVehicles, restoredActiveId)) {
           storageIssue = "백업을 저장하지 못했습니다. 저장 공간 설정을 확인하고 다시 시도해 주세요.";
           renderRecoveryState();
           return;
         }
+        data = getVehicleData(vehicles.find((record) => record.id === activeVehicleId));
         render();
         renderRecoveryState();
         showToast("백업 데이터를 복원했어요.");
@@ -1745,6 +1933,8 @@
         try {
           localStorage.removeItem(STORAGE_KEY);
           data = createEmptyData();
+          activeVehicleId = createVehicleId();
+          vehicles = [{ id: activeVehicleId, ...data }];
           storageIssue = null;
           recoveryText = null;
           render();

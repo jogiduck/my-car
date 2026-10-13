@@ -153,6 +153,13 @@
     .summary-number { margin-top: 10px; font-size: 23px; font-weight: 750; letter-spacing: -.8px; }
     .summary-number small { margin-left: 2px; color: var(--muted); font-size: 12px; font-weight: 550; letter-spacing: 0; }
     .summary-note { margin: 6px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; white-space: pre-line; }
+    .economy-panel { margin: 0 0 24px; padding: 18px 20px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
+    .economy-panel h2 { margin: 0; font-size: 14px; }
+    .economy-help { margin: 5px 0 14px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .economy-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .economy-metric { min-width: 0; padding: 12px; border-radius: 10px; background: #f6f8f7; }
+    .economy-metric span { display: block; color: var(--muted); font-size: 10px; }
+    .economy-metric strong { display: block; margin-top: 6px; font-size: 17px; }
     .maintenance-alert { margin: 0 0 16px; padding: 14px 16px; border: 1px solid #efd59f; border-radius: 12px; background: #fff8e8; color: #765313; }
     .maintenance-alert.overdue { border-color: #efc6c0; background: #fff1ef; color: #943f35; }
     .maintenance-alert h3 { margin: 0; font-size: 13px; }
@@ -290,6 +297,7 @@
       .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .summary-card { padding: 15px; }
       .summary-number { font-size: 20px; }
+      .economy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .consumables-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 480px) {
@@ -417,6 +425,17 @@
           <div class="summary-heading"><span>유지비 합계</span><span class="summary-icon amber" aria-hidden="true">＋</span></div>
           <div class="summary-number" id="otherExpense">0<small>원</small></div>
         </article>
+      </section>
+
+      <section class="economy-panel" aria-labelledby="economyHeading">
+        <h2 id="economyHeading">전체 평균연비</h2>
+        <p class="economy-help" id="economyHelp">현재 주행거리부터 가득 주유로 시작하고, 이후 주유량·금액·주행거리를 기록해 주세요. 다음 가득 주유 때 실제 평균연비를 계산합니다.</p>
+        <div class="economy-grid" aria-live="polite">
+          <div class="economy-metric"><span>연비 측정 주행거리</span><strong id="economyDistance">계산 대기</strong></div>
+          <div class="economy-metric"><span>사용 연료량</span><strong id="economyVolume">-</strong></div>
+          <div class="economy-metric"><span>구간 주유비</span><strong id="economyCost">-</strong></div>
+          <div class="economy-metric"><span id="economyEfficiencyLabel">실제 평균연비</span><strong id="economyEfficiency">기록 대기</strong></div>
+        </div>
       </section>
 
       <section class="panel consumables-panel" aria-labelledby="consumablesHeading">

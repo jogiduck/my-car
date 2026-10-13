@@ -487,7 +487,7 @@
         <p class="panel-subtitle">더 최근의 주행거리 기록은 현재 값에 자동 반영되며, 여기서 현재 값을 직접 수정할 수 있어요.</p>
         <div class="input-row">
           <div class="form-field"><label class="form-label" for="carAcquisitionMileageInput">인수 당시 주행거리</label><div class="input-with-suffix"><input class="input" id="carAcquisitionMileageInput" name="acquisitionMileage" type="number" min="0" step="1" placeholder="선택 입력"><span class="suffix">km</span></div></div>
-          <div class="form-field"><label class="form-label" for="carMileageInput">현재 기준 주행거리<span class="required">*</span></label><div class="input-with-suffix"><input class="input" id="carMileageInput" name="mileage" type="number" min="0" step="1" required><span class="suffix">km</span></div></div>
+          <div class="form-field"><label class="form-label" for="carMileageInput">현재 기준 주행거리<span class="required">*</span></label><div class="input-with-suffix"><input class="input" id="carMileageInput" name="mileage" type="number" min="0" step="1" required><span class="suffix">km</span></div><p class="help-note" id="mileageValidationNote">현재 주행거리는 인수 당시 주행거리 이상이어야 해요. 인수거리를 입력하면 현재거리도 필요한 만큼 자동으로 맞춰드려요.</p></div>
         </div>
         <div class="form-field"><label class="form-label" for="carPurchaseDateInput">인수일 (평균 주행거리 계산용)</label><input class="input" id="carPurchaseDateInput" name="purchaseDate" type="date"></div>
         <div class="input-row">
@@ -1170,6 +1170,8 @@
         $("#carMileageInput").value = data.vehicle.mileage ?? "";
         $("#carPurchaseDateInput").value = data.vehicle.purchaseDate || "";
         $("#carAcquisitionMileageInput").setCustomValidity("");
+        $("#carMileageInput").setCustomValidity("");
+        syncAcquisitionAndCurrentMileage();
         $("#carPurchaseDateInput").max = localToday();
         vehicleDialog.showModal();
       });
@@ -1177,6 +1179,30 @@
       function closeVehicleDialog() {
         vehicleDialog.close();
       }
+
+      function syncAcquisitionAndCurrentMileage() {
+        const acquisitionInput = $("#carAcquisitionMileageInput");
+        const mileageInput = $("#carMileageInput");
+        const acquisition = acquisitionInput.value === "" ? null : Number(acquisitionInput.value);
+        const current = mileageInput.value === "" ? null : Number(mileageInput.value);
+        mileageInput.min = acquisition == null ? "0" : String(acquisition);
+        if (acquisition != null && Number.isFinite(acquisition) && (current == null || current < acquisition)) {
+          mileageInput.value = String(acquisition);
+        }
+      }
+
+      $("#carAcquisitionMileageInput").addEventListener("input", syncAcquisitionAndCurrentMileage);
+      $("#carMileageInput").addEventListener("input", () => {
+        const acquisitionInput = $("#carAcquisitionMileageInput");
+        const mileageInput = $("#carMileageInput");
+        const acquisition = acquisitionInput.value === "" ? null : Number(acquisitionInput.value);
+        const current = mileageInput.value === "" ? null : Number(mileageInput.value);
+        mileageInput.setCustomValidity(
+          acquisition != null && current != null && current < acquisition
+            ? "현재 주행거리는 인수 당시 주행거리보다 작을 수 없습니다."
+            : ""
+        );
+      });
 
       $("#closeVehicleDialog").addEventListener("click", closeVehicleDialog);
       $("#cancelVehicleDialog").addEventListener("click", closeVehicleDialog);
@@ -1191,9 +1217,9 @@
         const acquisitionMileage = acquisitionValue === "" ? null : Number(acquisitionValue);
         const mileageValue = $("#carMileageInput").value;
         const mileage = mileageValue === "" ? NaN : Number(mileageValue);
-        $("#carAcquisitionMileageInput").setCustomValidity(
+        $("#carMileageInput").setCustomValidity(
           acquisitionMileage != null && acquisitionMileage > mileage
-            ? "인수 당시 주행거리는 현재 주행거리보다 클 수 없습니다."
+            ? "현재 주행거리는 인수 당시 주행거리보다 작을 수 없습니다."
             : ""
         );
         $("#carPurchaseDateInput").setCustomValidity(

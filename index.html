@@ -135,18 +135,20 @@
       font-size: 12px;
     }
     .edit-car:hover { background: rgba(255,255,255,.13); }
-    .car-meta { position: relative; z-index: 1; display: flex; gap: 0; margin-top: 25px; }
-    .car-meta-item { min-width: 155px; padding-right: 24px; }
+    .car-meta { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 25px; }
+    .car-detail { position: relative; z-index: 1; margin: 8px 0 0; color: #d3e4db; font-size: 11px; }
+    .car-meta-item { min-width: 0; padding-right: 16px; }
     .car-meta-item + .car-meta-item { padding-left: 24px; border-left: 1px solid rgba(255,255,255,.16); }
     .meta-label { display: block; margin-bottom: 7px; color: #a9c8b9; font-size: 11px; }
     .meta-value { font-size: 14px; font-weight: 650; }
-    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 17px 0 24px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 17px 0 24px; }
     .summary-card { min-height: 116px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
     .summary-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 600; }
     .summary-icon { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 9px; background: var(--green-soft); color: var(--green); font-size: 14px; }
     .summary-icon.amber { background: var(--amber-soft); color: var(--amber); }
     .summary-number { margin-top: 10px; font-size: 23px; font-weight: 750; letter-spacing: -.8px; }
     .summary-number small { margin-left: 2px; color: var(--muted); font-size: 12px; font-weight: 550; letter-spacing: 0; }
+    .summary-note { margin: 6px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; white-space: pre-line; }
     .consumables-panel { margin: 0 0 24px; padding-bottom: 20px; }
     .consumables-heading { align-items: flex-start; }
     .average-note { color: var(--muted); font-size: 10px; text-align: right; }
@@ -164,6 +166,7 @@
     .consumable-footer { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f3f1; }
     .consumable-last { overflow: hidden; color: var(--muted); font-size: 9px; line-height: 1.4; text-overflow: ellipsis; }
     .text-button { flex: 0 0 auto; padding: 4px 0 4px 5px; border: 0; background: transparent; color: var(--green); font-size: 10px; font-weight: 700; }
+    .text-button.secondary { color: var(--muted); }
     .text-button:hover { color: var(--green-dark); text-decoration: underline; }
     .fuel-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: -2px 0 14px; }
     .fuel-metric { padding: 9px 10px; border: 1px solid #e5eee8; border-radius: 8px; background: #f7faf8; }
@@ -178,7 +181,7 @@
     .panel-title { margin: 0; font-size: 15px; font-weight: 750; letter-spacing: -.3px; }
     .panel-subtitle { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
     .entry-form { padding: 18px 21px 21px; }
-    .type-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 18px; padding: 4px; border-radius: 10px; background: #f2f5f3; }
+    .type-switch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 18px; padding: 4px; border-radius: 10px; background: #f2f5f3; }
     .type-button { min-height: 35px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 650; }
     .type-button[aria-pressed="true"] { background: #fff; color: var(--green); box-shadow: 0 1px 4px rgba(25, 50, 38, .09); }
     .form-field { margin-bottom: 14px; }
@@ -275,6 +278,7 @@
       .content-grid { grid-template-columns: 1fr; }
       .entry-form { display: grid; grid-template-columns: 1fr 1fr; column-gap: 12px; }
       .type-switch, .form-actions, .form-field.full-width { grid-column: 1 / -1; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .summary-card { padding: 15px; }
       .summary-number { font-size: 20px; }
       .consumables-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -292,8 +296,10 @@
       .car-card { min-height: 178px; padding: 22px 20px; }
       .car-name { font-size: 20px; }
       .car-odometer-value { font-size: 26px; }
-      .car-meta-item { min-width: auto; padding-right: 16px; }
-      .car-meta-item + .car-meta-item { padding-left: 16px; }
+      .car-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+      .car-meta-item { padding-right: 8px; }
+      .car-meta-item + .car-meta-item { padding-left: 8px; }
+      .car-meta-item:nth-child(3) { padding-left: 0; border-left: 0; }
       .meta-value { font-size: 12px; }
       .summary-grid { gap: 8px; }
       .summary-card { min-height: 105px; padding: 12px; }
@@ -333,7 +339,7 @@
         <div>
           <p class="eyebrow">MY GARAGE</p>
           <h1>내 차 관리</h1>
-          <p class="welcome-copy">주유부터 정비까지, 차에 대한 기록을 간편하게 관리해요.</p>
+          <p class="welcome-copy">주유·정비·차량 유지비와 주행 정보를 한곳에서 관리해요.</p>
         </div>
         <div class="welcome-actions">
           <button class="button button-small" id="textExportButton" type="button" aria-label="차계부 텍스트 저장"><span class="desktop-label">TXT 저장</span><span class="mobile-label">TXT</span></button>
@@ -358,6 +364,7 @@
             <p class="car-label">MY VEHICLE</p>
             <h2 class="car-name" id="vehicleName">현대 아반떼 CN7</h2>
             <span class="plate" id="vehiclePlate">123가 4567</span>
+            <p class="car-detail" id="vehicleDetails"></p>
           </div>
           <button class="edit-car" id="editVehicleButton" type="button" aria-label="차량 정보 수정">✎ <span>차량 정보 수정</span></button>
         </div>
@@ -370,6 +377,7 @@
           <div class="car-meta-item"><span class="meta-label">연식</span><strong class="meta-value" id="vehicleYear">2022년</strong></div>
           <div class="car-meta-item"><span class="meta-label">차량 기본 연료</span><strong class="meta-value" id="vehicleFuel">휘발유</strong></div>
           <div class="car-meta-item"><span class="meta-label">인수일</span><strong class="meta-value" id="vehiclePurchaseDate">미등록</strong></div>
+          <div class="car-meta-item"><span class="meta-label">공인연비</span><strong class="meta-value" id="vehicleOfficialEconomy">미등록</strong></div>
         </div>
       </section>
 
@@ -381,10 +389,15 @@
         <article class="summary-card">
           <div class="summary-heading"><span>주유비</span><span class="summary-icon" aria-hidden="true">⛽</span></div>
           <div class="summary-number" id="fuelExpense">0<small>원</small></div>
+          <p class="summary-note" id="fuelDistanceEquivalent">공인연비·주유량 기록 시 환산거리 표시</p>
         </article>
         <article class="summary-card">
           <div class="summary-heading"><span>정비비</span><span class="summary-icon amber" aria-hidden="true">🔧</span></div>
           <div class="summary-number" id="serviceExpense">0<small>원</small></div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-heading"><span>기타 유지비</span><span class="summary-icon amber" aria-hidden="true">＋</span></div>
+          <div class="summary-number" id="otherExpense">0<small>원</small></div>
         </article>
       </section>
 
@@ -405,6 +418,7 @@
             <div class="type-switch" role="group" aria-label="내역 종류">
               <button class="type-button" type="button" data-type="fuel" aria-pressed="true">⛽ 주유</button>
               <button class="type-button" type="button" data-type="service" aria-pressed="false">🔧 정비</button>
+              <button class="type-button" type="button" data-type="expense" aria-pressed="false">＋ 유지비</button>
             </div>
             <input id="entryType" type="hidden" value="fuel">
             <div class="form-field">
@@ -417,12 +431,12 @@
             </div>
             <div class="form-field" id="fuelVolumeField">
               <label class="form-label" for="entryVolume"><span id="entryVolumeLabel">주유량</span><span class="required hidden" id="volumeRequiredMark">*</span></label>
-              <div class="input-with-suffix"><input class="input" id="entryVolume" name="volume" type="number" min="0.1" step="0.1" placeholder="선택 입력"><span class="suffix">L</span></div>
+              <div class="input-with-suffix"><input class="input" id="entryVolume" name="volume" type="number" min="0.1" step="0.1" placeholder="선택 입력"><span class="suffix" id="entryVolumeUnit">L</span></div>
             </div>
             <label class="checkbox-field hidden" id="fullTankField" for="entryFullTank"><input id="entryFullTank" type="checkbox"> 가득 충전했어요</label>
             <div class="fuel-metrics hidden full-width" id="fuelMetrics" aria-live="polite">
               <div class="fuel-metric"><span>이번 구간 연비</span><strong id="fuelEfficiencyPreview">가득 충전 기록 필요</strong></div>
-              <div class="fuel-metric"><span>L당 단가</span><strong id="fuelUnitPricePreview">충전량 입력 시 계산</strong></div>
+              <div class="fuel-metric"><span id="fuelUnitPriceLabel">L당 단가</span><strong id="fuelUnitPricePreview">충전량 입력 시 계산</strong></div>
             </div>
             <div class="form-field hidden" id="serviceCategoryField">
               <label class="form-label" for="entryCategory">정비 항목<span class="required">*</span></label>
@@ -439,8 +453,31 @@
                 <option value="wash">세차</option>
               </select>
             </div>
+            <div class="form-field hidden" id="expenseCategoryField">
+              <label class="form-label" for="expenseCategory">유지비 항목<span class="required">*</span></label>
+              <select class="input" id="expenseCategory" name="expenseCategory">
+                <option value="insurance">보험료</option>
+                <option value="tax">자동차세·등록비</option>
+                <option value="parking">주차비</option>
+                <option value="toll">통행료</option>
+                <option value="wash">세차</option>
+                <option value="other">기타 유지비</option>
+              </select>
+            </div>
             <p class="help-note hidden full-width" id="serviceLinkNote">소모품 항목을 선택하고 저장하면 마지막 교환 기록이 자동 갱신돼요.</p>
-            <div class="form-field">
+            <div class="form-field hidden" id="fuelStationField">
+              <label class="form-label" for="entryStation">주유소·충전소</label>
+              <input class="input" id="entryStation" type="text" maxlength="80" placeholder="선택 입력">
+            </div>
+            <div class="form-field hidden" id="serviceShopField">
+              <label class="form-label" for="entryShop">정비소</label>
+              <input class="input" id="entryShop" type="text" maxlength="80" placeholder="선택 입력">
+            </div>
+            <div class="form-field hidden full-width" id="serviceDetailsField">
+              <label class="form-label" for="entryDetails">작업 내용</label>
+              <input class="input" id="entryDetails" type="text" maxlength="160" placeholder="예: 브레이크 패드 앞쪽 교환">
+            </div>
+            <div class="form-field" id="entryMileageField">
               <label class="form-label" for="entryMileage"><span id="entryMileageLabel">주행거리</span><span class="required hidden" id="mileageRequiredMark">*</span></label>
               <div class="input-with-suffix"><input class="input" id="entryMileage" name="mileage" type="number" min="0" step="1" placeholder="선택 입력"><span class="suffix">km</span></div>
             </div>
@@ -465,6 +502,7 @@
               <button class="filter-button" type="button" data-filter="all" aria-pressed="true">전체</button>
               <button class="filter-button" type="button" data-filter="fuel" aria-pressed="false">주유</button>
               <button class="filter-button" type="button" data-filter="service" aria-pressed="false">정비</button>
+              <button class="filter-button" type="button" data-filter="expense" aria-pressed="false">유지비</button>
             </div>
             <label class="search-wrap">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
@@ -496,10 +534,31 @@
         </div>
         <div class="input-row">
           <div class="form-field"><label class="form-label" for="carFuelInput">차량 기본 연료</label><select class="input" id="carFuelInput" name="fuel"><option>휘발유</option><option>경유</option><option>LPG</option><option>전기</option><option>하이브리드</option><option>기타</option></select></div>
+          <div class="form-field"><label class="form-label" for="carTrimInput">세부 모델·트림</label><input class="input" id="carTrimInput" name="trim" maxlength="60" placeholder="선택 입력"></div>
         </div>
-        <p class="help-note">기본값은 휘발유예요. 선택한 연료가 저장되어 이후 주유 기록과 LPG 충전·연비 계산에 기본 적용되고, 설정에서 언제든 변경할 수 있어요. 과거 주유 기록은 입력 당시 연료를 유지해요.</p>
+        <div class="input-row">
+          <div class="form-field"><label class="form-label" for="carTransmissionInput">변속기</label><select class="input" id="carTransmissionInput" name="transmission"><option value="">선택 안 함</option><option>자동</option><option>CVT</option><option>DCT</option><option>수동</option><option>전기 구동</option><option>기타</option></select></div>
+          <div class="form-field"><label class="form-label" for="carOfficialEconomyInput">공인연비 (등록원부 표기)</label><input class="input" id="carOfficialEconomyInput" name="officialEconomy" type="text" maxlength="60" placeholder="예: 16.5 km/L"></div>
+        </div>
+        <p class="help-note">공인연비는 자동차 등록원부에 적힌 표기를 그대로 입력하는 참고 정보이며, 앱에서 변환하거나 계산에 사용하지 않아요.</p>
       </div>
       <div class="dialog-footer"><button class="button" type="button" id="cancelVehicleDialog">취소</button><button class="button button-primary" type="submit">저장</button></div>
+    </form>
+  </dialog>
+  <dialog id="consumableSettingsDialog" aria-labelledby="consumableSettingsTitle">
+    <form id="consumableSettingsForm">
+      <div class="dialog-header"><h2 id="consumableSettingsTitle">소모품 알림 설정</h2><button class="icon-button" type="button" id="closeConsumableSettingsDialog" aria-label="닫기">✕</button></div>
+      <div class="dialog-body">
+        <p class="panel-subtitle" id="consumableSettingsDescription"></p>
+        <input id="consumableSettingsItemId" type="hidden">
+        <label class="checkbox-field" for="consumableAlertsEnabled"><input id="consumableAlertsEnabled" type="checkbox" checked> 이 항목의 알림 켜기</label>
+        <div class="input-row">
+          <div class="form-field"><label class="form-label" for="consumableIntervalKm">교환 주행거리</label><div class="input-with-suffix"><input class="input" id="consumableIntervalKm" type="number" min="1" step="1" placeholder="기본값 사용"><span class="suffix">km</span></div></div>
+          <div class="form-field"><label class="form-label" for="consumableIntervalMonths">교환 기간</label><div class="input-with-suffix"><input class="input" id="consumableIntervalMonths" type="number" min="1" step="1" placeholder="기본값 사용"><span class="suffix">개월</span></div></div>
+        </div>
+        <p class="help-note">비워 둔 기준은 기본 주기를 사용합니다. 두 기준을 모두 비우면 알림을 켤 수 없습니다.</p>
+      </div>
+      <div class="dialog-footer"><button class="button" type="button" id="cancelConsumableSettingsDialog">취소</button><button class="button button-primary" type="submit">설정 저장</button></div>
     </form>
   </dialog>
   <dialog id="maintenanceDialog" aria-labelledby="maintenanceDialogTitle">
@@ -546,10 +605,19 @@
         "배터리": "battery"
       };
       const createEmptyData = () => ({
-        vehicle: { name: "", plate: "", year: "", fuel: "휘발유", acquisitionMileage: null, mileage: 0, purchaseDate: "", mileageDate: "", fuelSinceDate: "" },
+        vehicle: { name: "", plate: "", year: "", fuel: "휘발유", officialEconomy: null, trim: "", transmission: "", acquisitionMileage: null, mileage: 0, purchaseDate: "", mileageDate: "", fuelSinceDate: "" },
         entries: [],
-        consumableChanges: []
+        consumableChanges: [],
+        consumableSettings: {}
       });
+      const EXPENSE_CATEGORIES = [
+        { id: "insurance", name: "보험료" },
+        { id: "tax", name: "자동차세·등록비" },
+        { id: "parking", name: "주차비" },
+        { id: "toll", name: "통행료" },
+        { id: "wash", name: "세차" },
+        { id: "other", name: "기타 유지비" }
+      ];
       let storageIssue = null;
       let recoveryText = null;
       let data = loadData();
@@ -563,6 +631,7 @@
       const entryForm = $("#entryForm");
       const vehicleDialog = $("#vehicleDialog");
       const maintenanceDialog = $("#maintenanceDialog");
+      const consumableSettingsDialog = $("#consumableSettingsDialog");
       const dateInput = $("#entryDate");
 
       function loadData() {
@@ -595,11 +664,19 @@
 
       function normalizeData(value) {
         value.vehicle.acquisitionMileage ??= null;
+        value.vehicle.officialEconomy ??= null;
+        if (typeof value.vehicle.officialEconomy === "number") value.vehicle.officialEconomy = `${value.vehicle.officialEconomy} km/L`;
+        value.vehicle.trim ??= "";
+        value.vehicle.transmission ??= "";
         value.vehicle.purchaseDate ??= "";
         value.vehicle.mileageDate ??= "";
         value.vehicle.fuelSinceDate ??= "";
         value.consumableChanges ??= [];
+        value.consumableSettings ??= {};
         value.entries.forEach((entry) => {
+          if (entry.type === "fuel" && entry.fuelUnit == null) {
+            entry.fuelUnit = entry.fuelKind === "전기" ? "kWh" : "L";
+          }
           if (entry.type === "service" && !entry.consumableId && LEGACY_CONSUMABLES[entry.category]) {
             entry.consumableId = LEGACY_CONSUMABLES[entry.category];
           }
@@ -622,6 +699,11 @@
         if (typeof vehicle.name !== "string" || typeof vehicle.plate !== "string" || typeof vehicle.fuel !== "string") return false;
         if (!(vehicle.year === "" || typeof vehicle.year === "string")) return false;
         if (!Number.isFinite(Number(vehicle.mileage)) || Number(vehicle.mileage) < 0) return false;
+        if (vehicle.officialEconomy != null &&
+          !((typeof vehicle.officialEconomy === "string" && vehicle.officialEconomy.length <= 60) ||
+            (typeof vehicle.officialEconomy === "number" && Number.isFinite(vehicle.officialEconomy) && vehicle.officialEconomy > 0))) return false;
+        if (vehicle.trim != null && (typeof vehicle.trim !== "string" || vehicle.trim.length > 60)) return false;
+        if (vehicle.transmission != null && (typeof vehicle.transmission !== "string" || vehicle.transmission.length > 30)) return false;
         if (vehicle.acquisitionMileage != null && (!Number.isFinite(Number(vehicle.acquisitionMileage)) || Number(vehicle.acquisitionMileage) < 0)) return false;
         if (vehicle.purchaseDate && !isValidDate(vehicle.purchaseDate)) return false;
         if (vehicle.mileageDate && !isValidDate(vehicle.mileageDate)) return false;
@@ -630,16 +712,31 @@
         if (!value.entries.every((entry) => {
           if (!entry || typeof entry !== "object" || typeof entry.id !== "string" || !entry.id || ids.has(entry.id)) return false;
           ids.add(entry.id);
-          if (!["fuel", "service"].includes(entry.type) || typeof entry.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) return false;
+          if (!["fuel", "service", "expense"].includes(entry.type) || typeof entry.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) return false;
           if (!Number.isFinite(Number(entry.amount)) || Number(entry.amount) <= 0) return false;
           if (entry.mileage != null && (!Number.isFinite(Number(entry.mileage)) || Number(entry.mileage) < 0)) return false;
           if (entry.volume != null && (!Number.isFinite(Number(entry.volume)) || Number(entry.volume) <= 0)) return false;
           if (entry.consumableId && !CONSUMABLES.some((item) => item.id === entry.consumableId)) return false;
+          if (entry.type === "expense" && !EXPENSE_CATEGORIES.some((category) => category.id === entry.expenseCategory)) return false;
           if (entry.fullTank != null && typeof entry.fullTank !== "boolean") return false;
           if (entry.fuelKind != null && typeof entry.fuelKind !== "string") return false;
-          return (entry.memo == null || typeof entry.memo === "string") && (entry.category == null || typeof entry.category === "string");
+          if (entry.fuelUnit != null && !["L", "kWh"].includes(entry.fuelUnit)) return false;
+          if (entry.expenseCategory != null && !EXPENSE_CATEGORIES.some((category) => category.id === entry.expenseCategory)) return false;
+          return (entry.memo == null || typeof entry.memo === "string") &&
+            (entry.category == null || typeof entry.category === "string") &&
+            (entry.station == null || (typeof entry.station === "string" && entry.station.length <= 80)) &&
+            (entry.shop == null || (typeof entry.shop === "string" && entry.shop.length <= 80)) &&
+            (entry.details == null || (typeof entry.details === "string" && entry.details.length <= 160));
         })) return false;
         if (value.consumableChanges != null && !Array.isArray(value.consumableChanges)) return false;
+        if (value.consumableSettings != null && (typeof value.consumableSettings !== "object" || Array.isArray(value.consumableSettings))) return false;
+        if (!Object.entries(value.consumableSettings || {}).every(([itemId, settings]) =>
+          CONSUMABLES.some((item) => item.id === itemId) &&
+          settings && typeof settings === "object" && typeof settings.enabled === "boolean" &&
+          (settings.km == null || (Number.isFinite(Number(settings.km)) && Number(settings.km) > 0)) &&
+          (settings.months == null || (Number.isFinite(Number(settings.months)) && Number(settings.months) > 0)) &&
+          (!settings.enabled || settings.km != null || settings.months != null)
+        )) return false;
         return (value.consumableChanges || []).every((change) =>
           change && typeof change.id === "string" &&
           CONSUMABLES.some((item) => item.id === change.itemId) &&
@@ -758,7 +855,18 @@
           .sort((a, b) => b.date.localeCompare(a.date) || Number(b.mileage) - Number(a.mileage))[0] || null;
       }
 
+      function getConsumableSettings(item) {
+        const saved = data.consumableSettings?.[item.id];
+        return {
+          enabled: saved?.enabled !== false,
+          km: saved?.km ?? item.km,
+          months: saved?.months ?? item.months
+        };
+      }
+
       function getConsumableStatus(item, change, averageKm) {
+        const settings = getConsumableSettings(item);
+        if (!settings.enabled) return { status: "untracked", label: "알림 꺼짐", remaining: null, expectedDate: null, detail: "이 항목의 교환 알림이 꺼져 있어요." };
         if (!change) return { status: "untracked", label: "기록 필요", remaining: null, expectedDate: null, detail: "마지막 교환 정보를 입력해 주세요." };
         const currentMileage = Number(data.vehicle.mileage) || 0;
         const lastMileage = Number(change.mileage);
@@ -766,22 +874,31 @@
           return { status: "warning", label: "거리 확인", remaining: null, expectedDate: null, detail: "교환 당시 주행거리가 현재보다 높아요." };
         }
         const drivenSince = currentMileage - lastMileage;
-        const remaining = item.km == null ? null : item.km - drivenSince;
-        const distanceDueDate = item.km != null && remaining <= 0
+        const remaining = settings.km == null ? null : settings.km - drivenSince;
+        const distanceDueDate = settings.km != null && remaining <= 0
           ? localToday()
-          : item.km != null && averageKm
+          : settings.km != null && averageKm
             ? addMonths(localToday(), Math.ceil(remaining / averageKm))
             : null;
-        const timeDueDate = item.months != null ? addMonths(change.date, item.months) : null;
+        const timeDueDate = settings.months != null ? addMonths(change.date, settings.months) : null;
         const expectedDate = [distanceDueDate, timeDueDate].filter(Boolean).sort()[0] || null;
         const monthsLeft = timeDueDate ? monthDistance(localToday(), timeDueDate) : null;
-        const overdue = (remaining != null && remaining <= 0) || (timeDueDate && timeDueDate <= localToday());
-        const warning = !overdue && ((remaining != null && remaining <= 1000) || (monthsLeft != null && monthsLeft <= 1));
+        const distanceOverdue = remaining != null && remaining <= 0;
+        const timeOverdue = timeDueDate && timeDueDate <= localToday();
+        const overdue = distanceOverdue || timeOverdue;
+        const distanceWarning = remaining != null && remaining <= 1000;
+        const timeWarning = monthsLeft != null && monthsLeft <= 1;
+        const warning = !overdue && (distanceWarning || timeWarning);
         const status = overdue ? "overdue" : warning ? "warning" : "ok";
         const label = overdue ? "교체 필요" : warning ? "주의" : "양호";
+        const dueReason = overdue
+          ? [distanceOverdue ? "주행거리 초과" : "", timeOverdue ? "기간 초과" : ""].filter(Boolean).join(" · ")
+          : warning
+            ? [distanceWarning ? "주행거리 임박" : "", timeWarning ? "기간 임박" : ""].filter(Boolean).join(" · ")
+            : "";
         const detail = expectedDate
-          ? `예상 교환 ${expectedDate.slice(0, 7)}${overdue ? " · 교환 시기 경과" : ""}`
-          : item.km != null && !averageKm ? "평균 주행거리 데이터가 부족해요" : "예상일 계산 중";
+          ? `${dueReason ? `${dueReason} · ` : ""}예상 교환 ${expectedDate.slice(0, 7)}`
+          : settings.km != null && !averageKm ? "평균 주행거리 데이터가 부족해요" : dueReason || "예상일 계산 중";
         return { status, label, remaining, expectedDate, detail };
       }
 
@@ -792,8 +909,11 @@
           : "평균 계산에 날짜가 있는 주행거리 2건 이상 필요";
         $("#consumablesGrid").innerHTML = CONSUMABLES.map((item) => {
           const change = getLatestConsumableChange(item.id);
+          const settings = getConsumableSettings(item);
           const result = getConsumableStatus(item, change, averageKm);
-          const remainingText = !change
+          const remainingText = !settings.enabled
+            ? "알림 꺼짐"
+            : !change
             ? "기록 없음"
             : result.remaining == null
               ? "기간 기준"
@@ -804,14 +924,14 @@
             ? `마지막 교환 ${formatDate(change.date)} · ${formatNumber(change.mileage)} km`
             : "마지막 교환 기록 없음";
           const intervalText = [
-            item.km == null ? "" : `${formatNumber(item.km)} km`,
-            item.months == null ? "" : `${item.months}개월`
+            settings.km == null ? "" : `${formatNumber(settings.km)} km`,
+            settings.months == null ? "" : `${settings.months}개월`
           ].filter(Boolean).join(" 또는 ");
           return `<article class="consumable-card">
             <div class="consumable-top"><h3 class="consumable-name">${escapeHtml(item.name)}</h3><span class="status-badge ${result.status}">${result.label}</span></div>
             <p class="consumable-remaining">${remainingText}${result.remaining != null ? "<small>남음</small>" : ""}</p>
             <p class="consumable-detail">${escapeHtml(result.detail)}<br>기준 ${escapeHtml(intervalText)}</p>
-            <div class="consumable-footer"><span class="consumable-last">${escapeHtml(lastText)}</span><button class="text-button" type="button" data-maintenance-item="${item.id}">${change ? "수정" : "기록"}</button></div>
+            <div class="consumable-footer"><span class="consumable-last">${escapeHtml(lastText)}</span><span><button class="text-button" type="button" data-maintenance-item="${item.id}">${change ? "기록 수정" : "기록"}</button><button class="text-button secondary" type="button" data-consumable-settings="${item.id}">알림 설정</button></span></div>
           </article>`;
         }).join("");
       }
@@ -825,6 +945,8 @@
         $("#vehiclePlate").textContent = data.vehicle.plate || "차량 번호 미등록";
         $("#vehicleYear").textContent = data.vehicle.year ? `${data.vehicle.year}년` : "미등록";
         $("#vehicleFuel").textContent = data.vehicle.fuel || "미등록";
+        $("#vehicleOfficialEconomy").textContent = data.vehicle.officialEconomy || "미등록";
+        $("#vehicleDetails").textContent = [data.vehicle.trim, data.vehicle.transmission].filter(Boolean).join(" · ");
         $("#vehicleMileage").innerHTML = !data.vehicle.name && Number(data.vehicle.mileage) === 0
           ? "미등록"
           : `${formatNumber(data.vehicle.mileage)}<small>km</small>`;
@@ -869,23 +991,67 @@
         return { efficiency: intervalLiters > 0 && distance > 0 ? distance / intervalLiters : null, unitPrice };
       }
 
+      function getOfficialEconomy() {
+        const text = String(data.vehicle.officialEconomy || "").trim();
+        const match = text.match(/(\d+(?:[.,]\d+)?)\s*(km\s*\/\s*l|km\s*\/\s*kwh|kwh\s*\/\s*100\s*km)?/i);
+        if (!match) return null;
+        const value = Number(match[1].replace(",", "."));
+        if (!Number.isFinite(value) || value <= 0) return null;
+        const unitText = (match[2] || (data.vehicle.fuel === "전기" ? "" : "km/L")).toLowerCase().replace(/\s/g, "");
+        if (unitText === "km/l") return { value, fuelUnit: "L", kmPerUnit: value };
+        if (unitText === "km/kwh") return { value, fuelUnit: "kWh", kmPerUnit: value };
+        if (unitText === "kwh/100km") return { value, fuelUnit: "kWh", kmPerUnit: 100 / value };
+        return null;
+      }
+
+      function getFuelDistanceEstimate() {
+        const economy = getOfficialEconomy();
+        if (!economy) return null;
+        const entries = data.entries.filter((entry) =>
+          entry.type === "fuel" &&
+          (!entry.fuelKind || entry.fuelKind === data.vehicle.fuel) &&
+          (entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")) === economy.fuelUnit
+        );
+        const totalCost = entries.reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+        const measured = entries.filter((entry) => Number(entry.volume) > 0);
+        const recordedVolume = measured.reduce((sum, entry) => sum + Number(entry.volume), 0);
+        const measuredCost = measured.reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+        if (totalCost <= 0 || recordedVolume <= 0 || measuredCost <= 0) return null;
+        const averageUnitPrice = measuredCost / recordedVolume;
+        const distance = Math.round((totalCost / averageUnitPrice) * economy.kmPerUnit);
+        return {
+          distance,
+          recordedVolume,
+          totalCost,
+          averageUnitPrice,
+          distancePerTenThousandWon: distance / totalCost * 10000,
+          costPerKm: totalCost / distance,
+          fuelUnit: economy.fuelUnit,
+          estimatedMissingVolume: entries.some((entry) => !(Number(entry.volume) > 0))
+        };
+      }
+
       function updateFuelMetrics() {
         const isLpg = data.vehicle.fuel === "LPG" && $("#entryType").value === "fuel";
+        const isElectric = data.vehicle.fuel === "전기" && $("#entryType").value === "fuel";
+        const isFuel = $("#entryType").value === "fuel";
         $("#fullTankField").classList.toggle("hidden", !isLpg);
         $("#fuelMetrics").classList.toggle("hidden", !isLpg);
-        const isLpgFuel = data.vehicle.fuel === "LPG" && $("#entryType").value === "fuel";
         const needsServiceMileage = $("#entryType").value === "service" &&
           CONSUMABLES.some((item) => item.id === $("#entryCategory").value);
-        $("#entryVolume").required = isLpgFuel;
-        $("#entryMileage").required = isLpgFuel || needsServiceMileage;
-        $("#entryMileageLabel").textContent = isLpgFuel ? "충전 당시 주행거리" : needsServiceMileage ? "교환 당시 주행거리" : "주행거리";
-        $("#mileageRequiredMark").classList.toggle("hidden", !isLpgFuel && !needsServiceMileage);
-        $("#entryVolumeLabel").textContent = isLpgFuel ? "충전량" : "주유량";
-        $("#volumeRequiredMark").classList.toggle("hidden", !isLpgFuel);
-        if (isLpgFuel && !$("#entryMileage").value && Number(data.vehicle.mileage) > 0) {
+        $("#entryVolume").required = isLpg || isElectric;
+        $("#entryMileage").required = isLpg || needsServiceMileage;
+        $("#entryMileageField").classList.toggle("hidden", $("#entryType").value === "expense");
+        $("#entryMileageLabel").textContent = isLpg ? "충전 당시 주행거리" : needsServiceMileage ? "교환 당시 주행거리" : "주행거리";
+        $("#mileageRequiredMark").classList.toggle("hidden", !isLpg && !needsServiceMileage);
+        $("#entryVolumeLabel").textContent = isLpg || isElectric ? "충전량" : "주유량";
+        $("#entryVolumeUnit").textContent = isElectric ? "kWh" : "L";
+        $("#fuelUnitPriceLabel").textContent = isElectric ? "kWh당 단가" : "L당 단가";
+        $("#volumeRequiredMark").classList.toggle("hidden", !isLpg && !isElectric);
+        if ((isLpg || isElectric) && !$("#entryMileage").value && Number(data.vehicle.mileage) > 0) {
           $("#entryMileage").value = data.vehicle.mileage;
         }
-        if (!isLpg) return;
+        if (!isFuel || !isLpg) return;
         const volume = Number($("#entryVolume").value);
         const amount = Number($("#entryAmount").value);
         const currentMileage = $("#entryMileage").value === "" ? Number(data.vehicle.mileage) : Number($("#entryMileage").value);
@@ -913,12 +1079,21 @@
         const totals = data.entries.reduce((result, entry) => {
           const amount = Number(entry.amount) || 0;
           result.total += amount;
-          result[entry.type] += amount;
+          if (entry.type === "fuel") result.fuel += amount;
+          else if (entry.type === "service") result.service += amount;
+          else result.expense += amount;
           return result;
-        }, { total: 0, fuel: 0, service: 0 });
+        }, { total: 0, fuel: 0, service: 0, expense: 0 });
         $("#totalExpense").innerHTML = formatWon(totals.total);
         $("#fuelExpense").innerHTML = formatWon(totals.fuel);
         $("#serviceExpense").innerHTML = formatWon(totals.service);
+        $("#otherExpense").innerHTML = formatWon(totals.expense);
+        const estimate = getFuelDistanceEstimate();
+        $("#fuelDistanceEquivalent").textContent = estimate
+          ? `주입량 기록 ${formatNumber(estimate.recordedVolume.toFixed(1))} ${estimate.fuelUnit} · 환산거리 약 ${formatNumber(estimate.distance)} km
+1만원당 약 ${formatNumber(Math.round(estimate.distancePerTenThousandWon))} km · km당 약 ${formatNumber(Math.round(estimate.costPerKm))}원${estimate.estimatedMissingVolume ? "\n주입량이 없는 주유비는 기록 평균 단가로 추정" : ""}
+* 공인연비 기준 추정치로 실제 주행거리와 다를 수 있어요.`
+          : "공인연비 표기와 주유량·충전량 기록이 필요해요";
       }
 
       function renderEntries() {
@@ -926,7 +1101,12 @@
           .filter((entry) => activeFilter === "all" || entry.type === activeFilter)
           .filter((entry) => {
             if (!searchQuery) return true;
-            const searchable = [entry.memo, entry.type === "service" ? getServiceCategoryName(entry) : "", entry.date, entry.amount, entry.mileage, entry.volume, entry.type === "fuel" ? "주유" : "정비"].join(" ").toLocaleLowerCase("ko-KR");
+            const searchable = [entry.memo, entry.details, entry.station, entry.shop,
+              entry.type === "service" ? getServiceCategoryName(entry) : "",
+              entry.type === "expense" ? getExpenseCategoryName(entry) : "",
+              entry.date, entry.amount, entry.mileage, entry.volume,
+              entry.type === "fuel" ? "주유" : entry.type === "service" ? "정비" : "유지비"
+            ].join(" ").toLocaleLowerCase("ko-KR");
             return searchable.includes(searchQuery.toLocaleLowerCase("ko-KR"));
           })
           .sort((a, b) => {
@@ -935,31 +1115,36 @@
           });
         const list = $("#entriesList");
         $("#entryCount").textContent = `총 ${filtered.length}건`;
-        $("#historySubtitle").textContent = `주유와 정비 기록 ${data.entries.length}건을 모아봤어요.`;
+        $("#historySubtitle").textContent = `주유·정비·유지비 기록 ${data.entries.length}건을 모아봤어요.`;
         $("#sortButton").textContent = sortNewestFirst ? "최신순 ↓" : "오래된순 ↑";
         if (!filtered.length) {
           const hasAnyEntries = data.entries.length > 0;
           const hasActiveQuery = searchQuery || activeFilter !== "all";
-          list.innerHTML = `<div class="empty-state"><div class="empty-illustration" aria-hidden="true">${hasActiveQuery ? "⌕" : "＋"}</div><strong>${hasActiveQuery ? "조건에 맞는 내역이 없어요" : hasAnyEntries ? "아직 등록된 내역이 없어요" : "첫 내역을 기록해 보세요"}</strong><p>${hasActiveQuery ? "검색어나 필터를 바꾸거나 전체 내역을 확인해 보세요." : "주유 또는 정비 내역을 추가하면 여기에 표시돼요."}</p></div>`;
+          list.innerHTML = `<div class="empty-state"><div class="empty-illustration" aria-hidden="true">${hasActiveQuery ? "⌕" : "＋"}</div><strong>${hasActiveQuery ? "조건에 맞는 내역이 없어요" : hasAnyEntries ? "아직 등록된 내역이 없어요" : "첫 내역을 기록해 보세요"}</strong><p>${hasActiveQuery ? "검색어나 필터를 바꾸거나 전체 내역을 확인해 보세요." : "주유·정비·차량 유지비를 기록하면 여기에 표시돼요."}</p></div>`;
           return;
         }
         list.innerHTML = filtered.map((entry) => {
           const isFuel = entry.type === "fuel";
-          const title = isFuel ? (entry.fullTank ? "주유 · 가득 충전" : "주유") : getServiceCategoryName(entry);
+          const isService = entry.type === "service";
+          const title = isFuel
+            ? (entry.fullTank ? "주유 · 가득 충전" : "주유")
+            : isService ? getServiceCategoryName(entry) : getExpenseCategoryName(entry);
           const fuelMetrics = isFuel ? calculateFuelMetrics(entry) : null;
           const details = [
             formatDate(entry.date),
             entry.mileage != null ? `${formatNumber(entry.mileage)} km` : "",
-            isFuel && entry.volume ? `${entry.volume} L` : "",
+            isFuel && entry.volume ? `${entry.volume} ${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
+            entry.station || entry.shop,
+            entry.details,
             fuelMetrics?.efficiency ? `${fuelMetrics.efficiency.toFixed(1)} km/L` : "",
-            fuelMetrics?.unitPrice ? `${formatNumber(Math.round(fuelMetrics.unitPrice))}원/L` : "",
+            fuelMetrics?.unitPrice ? `${formatNumber(Math.round(fuelMetrics.unitPrice))}원/${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             entry.memo
           ].filter(Boolean).join(" · ");
           return `<article class="entry-item">
-            <div class="entry-icon ${isFuel ? "" : "service"}" aria-hidden="true">${isFuel ? "⛽" : "🔧"}</div>
+            <div class="entry-icon ${isService ? "service" : ""}" aria-hidden="true">${isFuel ? "⛽" : isService ? "🔧" : "＋"}</div>
             <div><p class="entry-name">${escapeHtml(title)}</p><p class="entry-description">${escapeHtml(details || "추가 정보 없음")}</p></div>
             <div class="entry-right">
-              <div class="entry-amount"><strong>${formatNumber(entry.amount)}원</strong><span>${isFuel ? "주유비" : "정비비"}</span></div>
+              <div class="entry-amount"><strong>${formatNumber(entry.amount)}원</strong><span>${isFuel ? "주유비" : isService ? "정비비" : "유지비"}</span></div>
               <div class="entry-actions">
                 <button class="icon-button" type="button" data-action="edit" data-id="${escapeHtml(entry.id)}" aria-label="${escapeHtml(title)} 내역 수정">✎</button>
                 <button class="icon-button delete" type="button" data-action="delete" data-id="${escapeHtml(entry.id)}" aria-label="${escapeHtml(title)} 내역 삭제">×</button>
@@ -967,6 +1152,10 @@
             </div>
           </article>`;
         }).join("");
+      }
+
+      function getExpenseCategoryName(entry) {
+        return EXPENSE_CATEGORIES.find((category) => category.id === entry.expenseCategory)?.name || "기타 유지비";
       }
 
       function render() {
@@ -983,12 +1172,14 @@
           button.disabled = Boolean(editingId);
         });
         $("#fuelVolumeField").classList.toggle("hidden", type !== "fuel");
+        $("#fuelStationField").classList.toggle("hidden", type !== "fuel");
         $("#serviceCategoryField").classList.toggle("hidden", type !== "service");
+        $("#serviceShopField").classList.toggle("hidden", type !== "service");
+        $("#serviceDetailsField").classList.toggle("hidden", type !== "service");
+        $("#expenseCategoryField").classList.toggle("hidden", type !== "expense");
+        $("#expenseCategory").required = type === "expense";
         $("#entryCategory").required = type === "service";
         $("#serviceLinkNote").classList.toggle("hidden", type !== "service");
-        if (type === "service" && CONSUMABLES.some((item) => item.id === $("#entryCategory").value) && !$("#entryMileage").value && Number(data.vehicle.mileage) > 0) {
-          $("#entryMileage").value = data.vehicle.mileage;
-        }
         updateFuelMetrics();
       }
 
@@ -1014,6 +1205,10 @@
         $("#entryVolume").value = entry.volume ?? "";
         $("#entryMileage").value = entry.mileage ?? "";
         $("#entryMemo").value = entry.memo || "";
+        $("#entryStation").value = entry.station || "";
+        $("#entryShop").value = entry.shop || "";
+        $("#entryDetails").value = entry.details || "";
+        $("#expenseCategory").value = entry.expenseCategory || "other";
         $("#entryFullTank").checked = Boolean(entry.fullTank);
         if (entry.type === "service") $("#entryCategory").value = entry.consumableId || (LEGACY_CONSUMABLES[entry.category] || (entry.category === "세차" ? "wash" : entry.category) || "other");
         updateFuelMetrics();
@@ -1057,16 +1252,18 @@
         $(`#${id}`).addEventListener("input", updateFuelMetrics);
       });
       $("#entryFullTank").addEventListener("change", updateFuelMetrics);
-      dateInput.addEventListener("change", updateFuelMetrics);
       $("#entryCategory").addEventListener("change", () => {
         const item = CONSUMABLES.find((candidate) => candidate.id === $("#entryCategory").value);
-        if (item && !$("#entryMileage").value && Number(data.vehicle.mileage) > 0) {
-          $("#entryMileage").value = data.vehicle.mileage;
-        }
         updateFuelMetrics();
         $("#serviceLinkNote").textContent = item
-          ? `저장하면 ${item.name} 교환 기록이 ${$("#entryMileage").value ? `${formatNumber($("#entryMileage").value)} km` : `${formatNumber(data.vehicle.mileage)} km`} 기준으로 자동 갱신돼요.`
+          ? `저장하면 ${item.name} 교환 기록이 입력한 날짜와 주행거리 기준으로 자동 갱신돼요.`
           : "소모품 항목을 선택하고 저장하면 마지막 교환 기록이 자동 갱신돼요.";
+      });
+      dateInput.addEventListener("change", () => {
+        updateFuelMetrics();
+        if ($("#entryType").value === "service" && !editingId && dateInput.value < localToday()) {
+          $("#entryMileage").value = "";
+        }
       });
 
       entryForm.addEventListener("submit", (event) => {
@@ -1088,26 +1285,31 @@
           type,
           date: dateInput.value,
           amount,
-          mileage: mileageValue === "" ? null : Number(mileageValue),
+          mileage: type === "expense" || mileageValue === "" ? null : Number(mileageValue),
           memo: $("#entryMemo").value.trim()
         };
         if (type === "fuel" && volumeValue !== "") entry.volume = Number(volumeValue);
         if (type === "fuel") {
           entry.fuelKind = data.vehicle.fuel;
+          entry.fuelUnit = data.vehicle.fuel === "전기" ? "kWh" : "L";
+          entry.station = $("#entryStation").value.trim();
           if (data.vehicle.fuel === "LPG") entry.fullTank = $("#entryFullTank").checked;
         }
         if (type === "service") {
           const selectedCategory = $("#entryCategory").value;
+          entry.shop = $("#entryShop").value.trim();
+          entry.details = $("#entryDetails").value.trim();
           if (CONSUMABLES.some((item) => item.id === selectedCategory)) entry.consumableId = selectedCategory;
           else entry.category = selectedCategory;
         }
+        if (type === "expense") entry.expenseCategory = $("#expenseCategory").value;
         const nextData = JSON.parse(JSON.stringify(data));
         if (editingId) {
           nextData.entries = nextData.entries.map((existing) => existing.id === editingId ? entry : existing);
         } else {
           nextData.entries.push(entry);
         }
-        if (entry.mileage != null && entry.mileage > Number(nextData.vehicle.mileage) && (!nextData.vehicle.mileageDate || entry.date >= nextData.vehicle.mileageDate)) {
+        if (entry.type !== "expense" && entry.mileage != null && entry.mileage > Number(nextData.vehicle.mileage) && (!nextData.vehicle.mileageDate || entry.date >= nextData.vehicle.mileageDate)) {
           nextData.vehicle.mileage = entry.mileage;
           nextData.vehicle.mileageDate = entry.date;
         }
@@ -1166,6 +1368,9 @@
         $("#carPlateInput").value = data.vehicle.plate || "";
         $("#carYearInput").value = data.vehicle.year || "";
         $("#carFuelInput").value = data.vehicle.fuel || "휘발유";
+        $("#carTrimInput").value = data.vehicle.trim || "";
+        $("#carTransmissionInput").value = data.vehicle.transmission || "";
+        $("#carOfficialEconomyInput").value = data.vehicle.officialEconomy ?? "";
         $("#carAcquisitionMileageInput").value = data.vehicle.acquisitionMileage ?? "";
         $("#carMileageInput").value = data.vehicle.mileage ?? "";
         $("#carPurchaseDateInput").value = data.vehicle.purchaseDate || "";
@@ -1236,6 +1441,9 @@
             plate: $("#carPlateInput").value.trim(),
             year: $("#carYearInput").value,
             fuel,
+            trim: $("#carTrimInput").value.trim(),
+            transmission: $("#carTransmissionInput").value,
+            officialEconomy: $("#carOfficialEconomyInput").value.trim() || null,
             acquisitionMileage,
             mileage,
             purchaseDate: $("#carPurchaseDateInput").value,
@@ -1248,6 +1456,7 @@
         const saved = saveData(nextData);
         if (!saved) return;
         renderVehicle();
+        renderSummary();
         renderConsumables();
         updateFuelMetrics();
         closeVehicleDialog();
@@ -1275,13 +1484,70 @@
         $("#maintenanceRecordId").value = latest?.id || "";
         $("#maintenanceDateInput").value = latest?.date || localToday();
         $("#maintenanceDateInput").max = localToday();
-        $("#maintenanceMileageInput").value = latest?.mileage ?? data.vehicle.mileage ?? "";
+        $("#maintenanceMileageInput").value = latest?.mileage ?? "";
         maintenanceDialog.showModal();
       }
 
       $("#consumablesGrid").addEventListener("click", (event) => {
         const button = event.target.closest("[data-maintenance-item]");
-        if (button) openMaintenanceDialog(button.dataset.maintenanceItem);
+        if (button) {
+          openMaintenanceDialog(button.dataset.maintenanceItem);
+          return;
+        }
+        const settingsButton = event.target.closest("[data-consumable-settings]");
+        if (settingsButton) openConsumableSettingsDialog(settingsButton.dataset.consumableSettings);
+      });
+
+      function openConsumableSettingsDialog(itemId) {
+        const item = CONSUMABLES.find((candidate) => candidate.id === itemId);
+        if (!item) return;
+        const settings = getConsumableSettings(item);
+        $("#consumableSettingsItemId").value = itemId;
+        $("#consumableSettingsTitle").textContent = `${item.name} 알림 설정`;
+        $("#consumableSettingsDescription").textContent = `기본 주기: ${item.km == null ? "" : `${formatNumber(item.km)} km`}${item.km != null && item.months != null ? " 또는 " : ""}${item.months == null ? "" : `${item.months}개월`}`;
+        $("#consumableAlertsEnabled").checked = settings.enabled;
+        $("#consumableIntervalKm").value = settings.km ?? "";
+        $("#consumableIntervalMonths").value = settings.months ?? "";
+        consumableSettingsDialog.showModal();
+      }
+
+      function closeConsumableSettingsDialog() {
+        consumableSettingsDialog.close();
+      }
+
+      $("#closeConsumableSettingsDialog").addEventListener("click", closeConsumableSettingsDialog);
+      $("#cancelConsumableSettingsDialog").addEventListener("click", closeConsumableSettingsDialog);
+      consumableSettingsDialog.addEventListener("click", (event) => {
+        if (event.target === consumableSettingsDialog) closeConsumableSettingsDialog();
+      });
+
+      $("#consumableSettingsForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const itemId = $("#consumableSettingsItemId").value;
+        const item = CONSUMABLES.find((candidate) => candidate.id === itemId);
+        if (!item) return;
+        const kmValue = $("#consumableIntervalKm").value;
+        const monthsValue = $("#consumableIntervalMonths").value;
+        const settings = {
+          enabled: $("#consumableAlertsEnabled").checked,
+          km: kmValue === "" ? item.km : Number(kmValue),
+          months: monthsValue === "" ? item.months : Number(monthsValue)
+        };
+        if (settings.enabled && settings.km == null && settings.months == null) {
+          showToast("알림을 켜려면 주행거리 또는 기간 기준이 필요합니다.", true);
+          return;
+        }
+        const nextData = {
+          ...data,
+          consumableSettings: {
+            ...data.consumableSettings,
+            [itemId]: settings
+          }
+        };
+        if (!saveData(nextData)) return;
+        closeConsumableSettingsDialog();
+        renderConsumables();
+        showToast(settings.enabled ? "소모품 알림 설정을 저장했어요." : "이 소모품 알림을 껐어요.");
       });
 
       $("#closeMaintenanceDialog").addEventListener("click", closeMaintenanceDialog);
@@ -1345,11 +1611,15 @@
       }
 
       function buildTextExport() {
+        const fuelDistanceEstimate = getFuelDistanceEstimate();
         const totals = data.entries.reduce((result, entry) => {
-          result.total += Number(entry.amount) || 0;
-          result[entry.type] += Number(entry.amount) || 0;
+          const amount = Number(entry.amount) || 0;
+          result.total += amount;
+          if (entry.type === "fuel") result.fuel += amount;
+          else if (entry.type === "service") result.service += amount;
+          else result.expense += amount;
           return result;
-        }, { total: 0, fuel: 0, service: 0 });
+        }, { total: 0, fuel: 0, service: 0, expense: 0 });
         const lines = [
           "내 차 관리 - 차계부",
           `내보낸 날짜: ${localToday()}`,
@@ -1358,7 +1628,10 @@
           `차량명: ${data.vehicle.name || "미등록"}`,
           `차량 번호: ${data.vehicle.plate || "미등록"}`,
           `연식: ${data.vehicle.year ? `${data.vehicle.year}년` : "미등록"}`,
+          `세부 모델·트림: ${data.vehicle.trim || "미등록"}`,
+          `변속기: ${data.vehicle.transmission || "미등록"}`,
           `기본 연료: ${data.vehicle.fuel || "미등록"}`,
+          `공인연비 (등록원부 표기): ${data.vehicle.officialEconomy || "미등록"}`,
           `인수일: ${data.vehicle.purchaseDate || "미등록"}`,
           `인수 당시 주행거리: ${data.vehicle.acquisitionMileage == null ? "미등록" : `${formatNumber(data.vehicle.acquisitionMileage)} km`}`,
           `현재 주행거리: ${formatNumber(data.vehicle.mileage)} km`,
@@ -1368,6 +1641,11 @@
           `총 지출: ${formatNumber(totals.total)}원`,
           `주유비: ${formatNumber(totals.fuel)}원`,
           `정비비: ${formatNumber(totals.service)}원`,
+          `기타 유지비: ${formatNumber(totals.expense)}원`,
+          `주입량 기록 합계: ${fuelDistanceEstimate ? `${formatNumber(fuelDistanceEstimate.recordedVolume.toFixed(1))} ${fuelDistanceEstimate.fuelUnit}` : "계산에 필요한 공인연비 표기 또는 주유량·충전량 기록 부족"}`,
+          `공인연비 기준 환산 주행거리: ${fuelDistanceEstimate ? `약 ${formatNumber(fuelDistanceEstimate.distance)} km (추정)` : "계산 불가"}`,
+          `1만원당 환산거리: ${fuelDistanceEstimate ? `약 ${formatNumber(Math.round(fuelDistanceEstimate.distancePerTenThousandWon))} km` : "계산 불가"}`,
+          `환산 km당 유류비: ${fuelDistanceEstimate ? `약 ${formatNumber(Math.round(fuelDistanceEstimate.costPerKm))}원` : "계산 불가"}`,
           "",
           "[소모품 교환 기록]"
         ];
@@ -1375,7 +1653,7 @@
           const change = getLatestConsumableChange(item.id);
           lines.push(`${item.name}: ${change ? `${change.date} / ${formatNumber(change.mileage)} km` : "기록 없음"}`);
         });
-        lines.push("", "[주유·정비 내역]");
+        lines.push("", "[주유·정비·차량 유지비 내역]");
         const entries = [...data.entries].sort((a, b) => a.date.localeCompare(b.date));
         if (!entries.length) lines.push("등록된 내역이 없습니다.");
         entries.forEach((entry) => {
@@ -1383,12 +1661,14 @@
           const metrics = fuel ? calculateFuelMetrics(entry) : null;
           const fields = [
             entry.date,
-            fuel ? `주유 (${entry.fuelKind || data.vehicle.fuel || "연료 미상"})${entry.fullTank ? " · 가득 충전" : ""}` : getServiceCategoryName(entry),
+            fuel ? `주유 (${entry.fuelKind || data.vehicle.fuel || "연료 미상"})${entry.fullTank ? " · 가득 충전" : ""}` : entry.type === "service" ? getServiceCategoryName(entry) : getExpenseCategoryName(entry),
             `${formatNumber(entry.amount)}원`,
-            entry.volume ? `${entry.volume} L` : "",
+            entry.volume ? `${entry.volume} ${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             entry.mileage != null ? `${formatNumber(entry.mileage)} km` : "",
             metrics?.efficiency ? `${metrics.efficiency.toFixed(1)} km/L` : "",
             metrics?.unitPrice ? `${formatNumber(Math.round(metrics.unitPrice))}원/L` : "",
+            entry.station ? `주유소/충전소 ${entry.station}` : entry.shop ? `정비소 ${entry.shop}` : "",
+            entry.details || "",
             entry.memo || ""
           ].filter(Boolean);
           lines.push(`- ${fields.join(" | ")}`);

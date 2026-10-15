@@ -160,10 +160,6 @@
     .economy-metric { min-width: 0; padding: 12px; border-radius: 10px; background: #f6f8f7; }
     .economy-metric span { display: block; color: var(--muted); font-size: 10px; }
     .economy-metric strong { display: block; margin-top: 6px; font-size: 17px; }
-    .station-list { display: grid; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
-    .station-list li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid #e5eee8; border-radius: 8px; background: #f7faf8; font-size: 11px; }
-    .station-list .station-rank { flex: 0 0 auto; font-weight: 750; color: var(--green-dark); }
-    .station-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
     .maintenance-alert { margin: 0 0 16px; padding: 14px 16px; border: 1px solid #efd59f; border-radius: 12px; background: #fff8e8; color: #765313; }
     .maintenance-alert.overdue { border-color: #efc6c0; background: #fff1ef; color: #943f35; }
     .maintenance-alert h3 { margin: 0; font-size: 13px; }
@@ -408,8 +404,6 @@
           <div class="car-meta-item"><span class="meta-label">차량 기본 연료</span><strong class="meta-value" id="vehicleFuel">휘발유</strong></div>
           <div class="car-meta-item"><span class="meta-label">인수일</span><strong class="meta-value" id="vehiclePurchaseDate">미등록</strong></div>
           <div class="car-meta-item"><span class="meta-label">공인연비</span><strong class="meta-value" id="vehicleOfficialEconomy">미등록</strong></div>
-          <div class="car-meta-item"><span class="meta-label">보험 만료</span><strong class="meta-value" id="vehicleInsuranceExpiry">미등록</strong></div>
-          <div class="car-meta-item"><span class="meta-label">검사 만료</span><strong class="meta-value" id="vehicleInspectionExpiry">미등록</strong></div>
         </div>
       </section>
 
@@ -444,21 +438,6 @@
         </div>
       </section>
 
-      <section class="economy-panel" aria-labelledby="stationHeading">
-        <h2 id="stationHeading">주유소 단가 · 최저가</h2>
-        <p class="economy-help" id="stationHelp">내 주유 기록의 주유소별 평균 단가로 계산해요. 키·로그인 없이 바로 볼 수 있고, 외부 최저가는 오피넷에서 확인해요.</p>
-        <div class="economy-grid" aria-live="polite">
-          <div class="economy-metric"><span>내 최저 단가 주유소</span><strong id="stationBest">기록 대기</strong></div>
-          <div class="economy-metric"><span>내 평균 단가</span><strong id="stationAverage">-</strong></div>
-          <div class="economy-metric"><span>최근 주유 단가</span><strong id="stationRecent">-</strong></div>
-          <div class="economy-metric"><span>절약 여지</span><strong id="stationSaving">-</strong></div>
-        </div>
-        <ol class="station-list" id="stationRanking"></ol>
-        <div class="station-actions">
-          <a class="button button-small" id="opinetLink" href="https://www.opinet.co.kr/" target="_blank" rel="noopener">오피넷에서 주변 최저가 보기</a>
-        </div>
-      </section>
-
       <section class="panel consumables-panel" aria-labelledby="consumablesHeading">
         <div class="panel-header consumables-heading">
           <div><h2 class="panel-title" id="consumablesHeading">소모품 관리</h2><p class="panel-subtitle">거리 또는 기간 중 먼저 도래하는 기준 · 제조사 정비 지침을 우선 확인해 주세요.</p></div>
@@ -485,10 +464,9 @@
               <input class="input" id="entryDate" name="date" type="date" required>
             </div>
             <div class="form-field">
-              <label class="form-label" for="entryAmount"><span id="entryAmountLabel">금액</span><span class="required" id="amountRequiredMark">*</span></label>
+              <label class="form-label" for="entryAmount">금액<span class="required">*</span></label>
               <div class="input-with-suffix"><input class="input" id="entryAmount" name="amount" type="number" min="1" step="1" placeholder="0" required><span class="suffix">원</span></div>
             </div>
-            <p class="help-note hidden full-width" id="fuelEstimateNote">주유비는 비워 두면 주행거리 기준으로 평균 단가·평균 연비로 자동 추정해요. 추정값은 목록에 ‘추정’ 표시가 붙어요.</p>
             <div class="form-field" id="fuelVolumeField">
               <label class="form-label" for="entryVolume"><span id="entryVolumeLabel">주유량</span><span class="required hidden" id="volumeRequiredMark">*</span></label>
               <div class="input-with-suffix"><input class="input" id="entryVolume" name="volume" type="number" min="0.1" step="0.1" placeholder="선택 입력"><span class="suffix" id="entryVolumeUnit">L</span></div>
@@ -527,8 +505,7 @@
             <p class="help-note hidden full-width" id="serviceLinkNote">소모품 항목을 선택하고 저장하면 마지막 교환 기록이 자동 갱신돼요.</p>
             <div class="form-field hidden" id="fuelStationField">
               <label class="form-label" for="entryStation">주유소·충전소</label>
-              <input class="input" id="entryStation" type="text" maxlength="80" placeholder="선택 입력" list="stationDatalist" autocomplete="off">
-              <datalist id="stationDatalist"></datalist>
+              <input class="input" id="entryStation" type="text" maxlength="80" placeholder="선택 입력">
             </div>
             <div class="form-field hidden" id="serviceShopField">
               <label class="form-label" for="entryShop">정비소</label>
@@ -594,37 +571,13 @@
           <div class="form-field"><label class="form-label" for="carYearInput">연식</label><input class="input" id="carYearInput" name="year" type="number" min="1900" max="2100" placeholder="예: 2022"></div>
         </div>
         <div class="input-row">
-          <div class="form-field"><label class="form-label" for="carFuelInput">차량 기본 연료</label><select class="input" id="carFuelInput" name="fuel"><option selected>휘발유</option><option>경유</option><option>LPG</option><option>전기</option><option>하이브리드</option><option>기타</option></select></div>
+          <div class="form-field"><label class="form-label" for="carFuelInput">차량 기본 연료</label><select class="input" id="carFuelInput" name="fuel"><option>휘발유</option><option>경유</option><option>LPG</option><option>전기</option><option>하이브리드</option><option>기타</option></select></div>
           <div class="form-field"><label class="form-label" for="carTrimInput">세부 모델·트림</label><input class="input" id="carTrimInput" name="trim" maxlength="60" placeholder="선택 입력"></div>
-        </div>
-        <p class="help-note">차량 기본 연료의 기본값은 휘발유예요. 주유 입력·연비 계산의 기준이 됩니다.</p>
-        <div class="input-row">
-          <div class="form-field"><label class="form-label" for="carTankCapacityInput">연료탱크 용량</label><div class="input-with-suffix"><input class="input" id="carTankCapacityInput" name="tankCapacity" type="number" min="1" step="1" placeholder="선택 입력"><span class="suffix">L</span></div></div>
-          <div class="form-field"><label class="form-label" for="carSidoInput">관심 지역 (오피넷용)</label><select class="input" id="carSidoInput" name="sido"><option value="">선택 안 함</option><option>서울</option><option>부산</option><option>대구</option><option>인천</option><option>광주</option><option>대전</option><option>울산</option><option>세종</option><option>경기</option><option>강원</option><option>충북</option><option>충남</option><option>전북</option><option>전남</option><option>경북</option><option>경남</option><option>제주</option></select></div>
-        </div>
-        <div class="input-row">
-          <div class="form-field"><label class="form-label" for="carInsuranceExpiryInput">보험 만료일</label><input class="input" id="carInsuranceExpiryInput" name="insuranceExpiry" type="date"></div>
-          <div class="form-field"><label class="form-label" for="carInspectionExpiryInput">검사 만료일</label><input class="input" id="carInspectionExpiryInput" name="inspectionExpiry" type="date"></div>
         </div>
         <div class="input-row">
           <div class="form-field"><label class="form-label" for="carTransmissionInput">변속기</label><select class="input" id="carTransmissionInput" name="transmission"><option value="">선택 안 함</option><option>자동</option><option>CVT</option><option>DCT</option><option>수동</option><option>전기 구동</option><option>기타</option></select></div>
           <div class="form-field"><label class="form-label" for="carOfficialEconomyInput">공인연비 (등록원부 표기)</label><input class="input" id="carOfficialEconomyInput" name="officialEconomy" type="text" maxlength="60" placeholder="예: 16.5 km/L"></div>
         </div>
-        <div class="input-row">
-          <div class="form-field"><label class="form-label" for="carTireSpecInput">타이어 규격</label><input class="input" id="carTireSpecInput" name="tireSpec" maxlength="30" placeholder="예: 205/55R16"></div>
-          <div class="form-field"><label class="form-label" for="carMemoInput">차량 메모</label><input class="input" id="carMemoInput" name="vehicleMemo" maxlength="80" placeholder="선택 입력"></div>
-        </div>
-        <p class="panel-subtitle">자동차등록증 (모두 선택 입력 · 공란 가능)</p>
-        <div class="input-row">
-          <div class="form-field"><label class="form-label" for="carVinInput">차대번호</label><input class="input" id="carVinInput" name="vin" maxlength="25" placeholder="예: KMH... (선택 입력)"></div>
-          <div class="form-field"><label class="form-label" for="carDisplacementInput">배기량</label><div class="input-with-suffix"><input class="input" id="carDisplacementInput" name="displacement" type="number" min="0" step="1" placeholder="선택 입력"><span class="suffix">cc</span></div></div>
-        </div>
-        <div class="input-row">
-          <div class="form-field"><label class="form-label" for="carVehicleTypeInput">차종</label><select class="input" id="carVehicleTypeInput" name="vehicleType"><option value="">선택 안 함</option><option>승용</option><option>승합</option><option>화물</option><option>특수</option><option>이륜</option><option>기타</option></select></div>
-          <div class="form-field"><label class="form-label" for="carUsageTypeInput">용도</label><select class="input" id="carUsageTypeInput" name="usageType"><option value="">선택 안 함</option><option>자가용</option><option>영업용</option><option>관용</option><option>기타</option></select></div>
-        </div>
-        <div class="form-field"><label class="form-label" for="carFirstRegistrationDateInput">최초등록일</label><input class="input" id="carFirstRegistrationDateInput" name="firstRegistrationDate" type="date"></div>
-        <p class="help-note">검사 만료일 31일 전부터 정기검사가 가능해요. 만료일을 입력하면 30일 전부터 알림을 보여줘요.</p>
         <p class="help-note">공인연비는 자동차 등록원부에 적힌 표기를 그대로 입력하는 참고 정보이며, 앱에서 변환하거나 계산에 사용하지 않아요.</p>
       </div>
       <div class="dialog-footer"><button class="button" type="button" id="cancelVehicleDialog">취소</button><button class="button button-primary" type="submit">저장</button></div>
@@ -690,7 +643,7 @@
         "배터리": "battery"
       };
       const createEmptyData = () => ({
-        vehicle: { name: "", plate: "", year: "", fuel: "휘발유", officialEconomy: null, trim: "", transmission: "", acquisitionMileage: null, mileage: 0, purchaseDate: "", mileageDate: "", fuelSinceDate: "", tankCapacity: null, sido: "", insuranceExpiry: "", inspectionExpiry: "", tireSpec: "", vehicleMemo: "" },
+        vehicle: { name: "", plate: "", year: "", fuel: "휘발유", officialEconomy: null, trim: "", transmission: "", acquisitionMileage: null, mileage: 0, purchaseDate: "", mileageDate: "", fuelSinceDate: "" },
         entries: [],
         consumableChanges: [],
         consumableSettings: {}
@@ -793,7 +746,6 @@
       }
 
       function normalizeData(value) {
-        if (!value.vehicle.fuel) value.vehicle.fuel = "휘발유";
         value.vehicle.acquisitionMileage ??= null;
         value.vehicle.officialEconomy ??= null;
         if (typeof value.vehicle.officialEconomy === "number") value.vehicle.officialEconomy = `${value.vehicle.officialEconomy} km/L`;
@@ -802,17 +754,6 @@
         value.vehicle.purchaseDate ??= "";
         value.vehicle.mileageDate ??= "";
         value.vehicle.fuelSinceDate ??= "";
-        value.vehicle.tankCapacity ??= null;
-        value.vehicle.sido ??= "";
-        value.vehicle.insuranceExpiry ??= "";
-        value.vehicle.inspectionExpiry ??= "";
-        value.vehicle.tireSpec ??= "";
-        value.vehicle.vehicleMemo ??= "";
-        value.vehicle.vin ??= "";
-        value.vehicle.displacement ??= null;
-        value.vehicle.vehicleType ??= "";
-        value.vehicle.usageType ??= "";
-        value.vehicle.firstRegistrationDate ??= "";
         value.consumableChanges ??= [];
         value.consumableSettings ??= {};
         value.entries.forEach((entry) => {
@@ -850,17 +791,6 @@
         if (vehicle.purchaseDate && !isValidDate(vehicle.purchaseDate)) return false;
         if (vehicle.mileageDate && !isValidDate(vehicle.mileageDate)) return false;
         if (vehicle.fuelSinceDate && !isValidDate(vehicle.fuelSinceDate)) return false;
-        if (vehicle.tankCapacity != null && !(Number.isFinite(Number(vehicle.tankCapacity)) && Number(vehicle.tankCapacity) > 0)) return false;
-        if (vehicle.sido != null && (typeof vehicle.sido !== "string" || vehicle.sido.length > 20)) return false;
-        if (vehicle.insuranceExpiry && !isValidDate(vehicle.insuranceExpiry)) return false;
-        if (vehicle.inspectionExpiry && !isValidDate(vehicle.inspectionExpiry)) return false;
-        if (vehicle.tireSpec != null && (typeof vehicle.tireSpec !== "string" || vehicle.tireSpec.length > 30)) return false;
-        if (vehicle.vehicleMemo != null && (typeof vehicle.vehicleMemo !== "string" || vehicle.vehicleMemo.length > 80)) return false;
-        if (vehicle.vin != null && (typeof vehicle.vin !== "string" || vehicle.vin.length > 25)) return false;
-        if (vehicle.displacement != null && !(Number.isFinite(Number(vehicle.displacement)) && Number(vehicle.displacement) >= 0)) return false;
-        if (vehicle.vehicleType != null && (typeof vehicle.vehicleType !== "string" || vehicle.vehicleType.length > 10)) return false;
-        if (vehicle.usageType != null && (typeof vehicle.usageType !== "string" || vehicle.usageType.length > 10)) return false;
-        if (vehicle.firstRegistrationDate && !isValidDate(vehicle.firstRegistrationDate)) return false;
         const ids = new Set();
         if (!value.entries.every((entry) => {
           if (!entry || typeof entry !== "object" || typeof entry.id !== "string" || !entry.id || ids.has(entry.id)) return false;
@@ -872,7 +802,6 @@
           if (entry.consumableId && !CONSUMABLES.some((item) => item.id === entry.consumableId)) return false;
           if (entry.type === "expense" && !EXPENSE_CATEGORIES.some((category) => category.id === entry.expenseCategory)) return false;
           if (entry.fullTank != null && typeof entry.fullTank !== "boolean") return false;
-          if (entry.estimatedAmount != null && typeof entry.estimatedAmount !== "boolean") return false;
           if (entry.fuelKind != null && typeof entry.fuelKind !== "string") return false;
           if (entry.fuelUnit != null && !["L", "kWh"].includes(entry.fuelUnit)) return false;
           if (entry.expenseCategory != null && !EXPENSE_CATEGORIES.some((category) => category.id === entry.expenseCategory)) return false;
@@ -1133,9 +1062,9 @@
         $("#vehicleName").textContent = data.vehicle.name || "차량 정보를 등록해 주세요";
         $("#vehiclePlate").textContent = data.vehicle.plate || "차량 번호 미등록";
         $("#vehicleYear").textContent = data.vehicle.year ? `${data.vehicle.year}년` : "미등록";
-        $("#vehicleFuel").textContent = data.vehicle.fuel || "휘발유";
+        $("#vehicleFuel").textContent = data.vehicle.fuel || "미등록";
         $("#vehicleOfficialEconomy").textContent = data.vehicle.officialEconomy || "미등록";
-        $("#vehicleDetails").textContent = [data.vehicle.trim, data.vehicle.transmission, data.vehicle.vehicleType, data.vehicle.usageType, data.vehicle.tankCapacity ? `탱크 ${data.vehicle.tankCapacity}L` : "", data.vehicle.tireSpec ? `타이어 ${data.vehicle.tireSpec}` : "", data.vehicle.sido ? `관심지역 ${data.vehicle.sido}` : "", data.vehicle.vehicleMemo].filter(Boolean).join(" · ");
+        $("#vehicleDetails").textContent = [data.vehicle.trim, data.vehicle.transmission].filter(Boolean).join(" · ");
         $("#vehicleMileage").innerHTML = !data.vehicle.name && Number(data.vehicle.mileage) === 0
           ? "미등록"
           : `${formatNumber(data.vehicle.mileage)}<small>km</small>`;
@@ -1145,170 +1074,6 @@
           ? "인수 당시 주행거리를 등록하면 누적 주행거리를 계산해요."
           : `인수 후 ${formatNumber(Math.max(0, current - acquired))} km 주행 · 인수 당시 ${formatNumber(acquired)} km`;
         $("#vehiclePurchaseDate").textContent = data.vehicle.purchaseDate ? formatDate(data.vehicle.purchaseDate) : "미등록";
-        $("#vehicleInsuranceExpiry").textContent = formatExpiryWithDday(data.vehicle.insuranceExpiry);
-        $("#vehicleInspectionExpiry").textContent = formatExpiryWithDday(data.vehicle.inspectionExpiry);
-      }
-
-      function daysUntil(dateStr) {
-        if (!isValidDate(dateStr)) return null;
-        const today = new Date(localToday() + "T00:00:00");
-        const target = new Date(dateStr + "T00:00:00");
-        return Math.round((target - today) / 86400000);
-      }
-
-      function subtractDays(dateStr, days) {
-        const date = new Date(dateStr + "T00:00:00");
-        date.setDate(date.getDate() - days);
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-      }
-
-      function formatExpiryWithDday(dateStr) {
-        if (!dateStr) return "미등록";
-        const remaining = daysUntil(dateStr);
-        if (remaining == null) return formatDate(dateStr);
-        if (remaining < 0) return `${formatDate(dateStr)} · 만료됨`;
-        if (remaining === 0) return `${formatDate(dateStr)} · 오늘 만료`;
-        return `${formatDate(dateStr)} · D-${remaining}`;
-      }
-
-      function renderInspectionReminder() {
-        const alert = $("#maintenanceAlert");
-        const existing = alert.querySelector("[data-inspection-notice]");
-        if (existing) existing.remove();
-        const inspection = data.vehicle.inspectionExpiry;
-        const insurance = data.vehicle.insuranceExpiry;
-        const notices = [];
-        if (inspection && isValidDate(inspection)) {
-          const remaining = daysUntil(inspection);
-          const windowStart = subtractDays(inspection, 31);
-          if (remaining < 0) {
-            notices.push(`정기검사 기간이 지났어요. 만료일 ${formatDate(inspection)} · 서둘러 검사받아 주세요.`);
-          } else if (remaining <= 30) {
-            notices.push(`정기검사 가능 기간이에요. 만료일 ${formatDate(inspection)} (D-${remaining}) · ${formatDate(windowStart)}부터 검사 가능해요.`);
-          }
-        }
-        if (insurance && isValidDate(insurance)) {
-          const remaining = daysUntil(insurance);
-          if (remaining != null && remaining < 0) {
-            notices.push(`자동차보험이 만료됐어요. 만료일 ${formatDate(insurance)} · 갱신해 주세요.`);
-          } else if (remaining != null && remaining <= 30) {
-            notices.push(`자동차보험 만료 ${remaining}일 전이에요. 만료일 ${formatDate(insurance)} · 미리 갱신해 주세요.`);
-          }
-        }
-        if (!notices.length) return;
-        alert.classList.remove("hidden");
-        const wrapper = document.createElement("div");
-        wrapper.dataset.inspectionNotice = "true";
-        wrapper.innerHTML = `<ul>${notices.map((text) => `<li><strong>기한 알림</strong>: ${escapeHtml(text)}</li>`).join("")}</ul>`;
-        alert.prepend(wrapper);
-      }
-
-      function getStationStats() {
-        const priced = data.entries.filter((entry) =>
-          entry.type === "fuel" && Number(entry.volume) > 0 && Number(entry.amount) > 0
-        );
-        const byStation = new Map();
-        priced.forEach((entry) => {
-          const name = (entry.station || "").trim() || "주유소 미기록";
-          const unitPrice = Number(entry.amount) / Number(entry.volume);
-          const record = byStation.get(name) || { name, count: 0, totalAmount: 0, totalVolume: 0, lastDate: "" };
-          record.count += 1;
-          record.totalAmount += Number(entry.amount);
-          record.totalVolume += Number(entry.volume);
-          if (!record.lastDate || entry.date > record.lastDate) record.lastDate = entry.date;
-          byStation.set(name, record);
-        });
-        const stations = [...byStation.values()].map((record) => ({
-          ...record,
-          avgUnitPrice: record.totalVolume > 0 ? record.totalAmount / record.totalVolume : null
-        })).filter((record) => record.avgUnitPrice != null)
-          .sort((a, b) => a.avgUnitPrice - b.avgUnitPrice);
-        const totalAmount = priced.reduce((sum, entry) => sum + Number(entry.amount), 0);
-        const totalVolume = priced.reduce((sum, entry) => sum + Number(entry.volume), 0);
-        const overallAvg = totalVolume > 0 ? totalAmount / totalVolume : null;
-        const recent = [...priced].sort((a, b) => String(b.date).localeCompare(String(a.date)))[0] || null;
-        return { stations, overallAvg, recent };
-      }
-
-      function renderStations() {
-        const { stations, overallAvg, recent } = getStationStats();
-        const unit = data.vehicle.fuel === "전기" ? "원/kWh" : "원/L";
-        const best = stations[0] || null;
-        $("#stationBest").textContent = best ? `${best.name} · ${formatNumber(Math.round(best.avgUnitPrice))}${unit}` : "기록 대기";
-        $("#stationAverage").textContent = overallAvg ? `${formatNumber(Math.round(overallAvg))}${unit}` : "-";
-        $("#stationRecent").textContent = recent ? `${formatNumber(Math.round(Number(recent.amount) / Number(recent.volume)))}${unit} · ${formatDate(recent.date)}` : "-";
-        if (best && overallAvg && overallAvg - best.avgUnitPrice >= 1) {
-          const tankL = Number(data.vehicle.tankCapacity) > 0 ? Number(data.vehicle.tankCapacity) : 40;
-          $("#stationSaving").textContent = `가득 주유 시 약 ${formatNumber(Math.round((overallAvg - best.avgUnitPrice) * tankL))}원 절약`;
-        } else if (best) {
-          $("#stationSaving").textContent = "절약 여지 적음";
-        } else {
-          $("#stationSaving").textContent = "-";
-        }
-        $("#stationRanking").innerHTML = stations.slice(0, 5).map((record, index) => {
-          const saving = overallAvg ? Math.round((overallAvg - record.avgUnitPrice) * 10) / 10 : 0;
-          const diff = saving > 0 ? `평균보다 L당 ${formatNumber(Math.round(saving))}원 저렴` : saving < 0 ? `평균보다 L당 ${formatNumber(Math.round(Math.abs(saving)))}원 비쌈` : "평균과 동일";
-          return `<li><span><span class="station-rank">${index + 1}위 · </span>${escapeHtml(record.name)} · ${record.count}회 · ${formatNumber(Math.round(record.avgUnitPrice))}${unit}</span><span>${escapeHtml(diff)}</span></li>`;
-        }).join("");
-        $("#stationHelp").textContent = stations.length
-          ? `내 주유 기록 ${stations.reduce((sum, record) => sum + record.count, 0)}건을 주유소별로 평균냈어요. 외부 최저가는 오피넷에서 확인해요.${data.vehicle.sido ? ` 관심지역: ${data.vehicle.sido}` : ""}`
-          : "주유소 이름과 함께 주유량·금액을 기록하면 내 최저가 주유소가 보여요. 외부 최저가는 오피넷에서 확인해요.";
-        const favorites = [...new Set(data.entries.map((entry) => (entry.station || "").trim()).filter(Boolean))].slice(0, 30);
-        const datalist = $("#stationDatalist");
-        if (datalist) datalist.innerHTML = favorites.map((name) => `<option value="${escapeHtml(name)}"></option>`).join("");
-      }
-
-      function getFuelCostAverages(ignoreId = null) {
-        const priced = data.entries.filter((entry) =>
-          entry.type === "fuel" && entry.id !== ignoreId && Number(entry.volume) > 0 && Number(entry.amount) > 0
-        );
-        const totalAmount = priced.reduce((sum, entry) => sum + Number(entry.amount), 0);
-        const totalVolume = priced.reduce((sum, entry) => sum + Number(entry.volume), 0);
-        const avgUnitPrice = totalVolume > 0 ? totalAmount / totalVolume : null;
-        const efficiencies = priced
-          .map((entry) => calculateFuelMetrics(entry, data.entries.filter((candidate) => candidate.id !== ignoreId)).efficiency)
-          .filter((value) => Number.isFinite(value) && value > 0);
-        const avgEfficiency = efficiencies.length
-          ? efficiencies.reduce((sum, value) => sum + value, 0) / efficiencies.length
-          : null;
-        const official = getOfficialEconomy();
-        const economyKmPerUnit = avgEfficiency || (official && official.kmPerUnit) || null;
-        let costPerKm = null;
-        const mileages = data.entries
-          .filter((entry) => entry.id !== ignoreId && Number.isFinite(Number(entry.mileage)))
-          .map((entry) => Number(entry.mileage));
-        if (priced.length && mileages.length >= 2) {
-          const distance = Math.max(...mileages) - Math.min(...mileages);
-          const fuelCost = data.entries
-            .filter((entry) => entry.type === "fuel" && entry.id !== ignoreId)
-            .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
-          if (distance > 0 && fuelCost > 0) costPerKm = fuelCost / distance;
-        }
-        return { avgUnitPrice, avgEfficiency, economyKmPerUnit, costPerKm, samples: priced.length };
-      }
-
-      function estimateFuelAmountFromMileage(currentMileage, volumeValue, ignoreId = null) {
-        const current = Number(currentMileage);
-        if (!Number.isFinite(current) || current < 0) return { amount: null, reason: "주행거리를 먼저 입력해 주세요." };
-        const { avgUnitPrice, economyKmPerUnit, costPerKm, samples } = getFuelCostAverages(ignoreId);
-        if (volumeValue !== "" && Number(volumeValue) > 0 && avgUnitPrice) {
-          return { amount: Math.round(Number(volumeValue) * avgUnitPrice), reason: `주유량 ${volumeValue}L × 평균 단가로 추정`, basis: "volume" };
-        }
-        const prevMileages = data.entries
-          .filter((entry) => entry.id !== ignoreId && Number.isFinite(Number(entry.mileage)) && Number(entry.mileage) < current)
-          .map((entry) => Number(entry.mileage));
-        if (!prevMileages.length) return { amount: null, reason: "이전 주행거리 기록이 없어 추정할 수 없어요. 금액을 직접 입력해 주세요." };
-        const distance = current - Math.max(...prevMileages);
-        if (!(distance > 0)) return { amount: null, reason: "이전 주행거리보다 큰 값을 입력해 주세요." };
-        if (economyKmPerUnit && avgUnitPrice) {
-          const volume = distance / economyKmPerUnit;
-          return { amount: Math.round(volume * avgUnitPrice), reason: `${formatNumber(distance)} km ÷ 평균 ${economyKmPerUnit.toFixed(1)} km/L × 평균 단가로 추정`, basis: "economy" };
-        }
-        if (costPerKm) {
-          return { amount: Math.round(distance * costPerKm), reason: `${formatNumber(distance)} km × km당 평균 ${formatNumber(Math.round(costPerKm))}원으로 추정`, basis: "costPerKm" };
-        }
-        if (!samples) return { amount: null, reason: "평균을 낼 주유 기록이 부족해요. 금액을 직접 입력해 주세요." };
-        return { amount: null, reason: "평균 연비·km당 비용을 계산할 수 없어요. 금액을 직접 입력해 주세요." };
       }
 
       function getServiceCategoryName(entry) {
@@ -1480,7 +1245,7 @@
           const isFuel = entry.type === "fuel";
           const isService = entry.type === "service";
           const title = isFuel
-            ? `${entry.fullTank ? "주유 · 가득 충전" : "주유"}${entry.estimatedAmount ? " · 추정" : ""}`
+            ? (entry.fullTank ? "주유 · 가득 충전" : "주유")
             : isService ? getServiceCategoryName(entry) : getExpenseCategoryName(entry);
           const fuelMetrics = isFuel ? calculateFuelMetrics(entry) : null;
           const details = [
@@ -1497,7 +1262,7 @@
             <div class="entry-icon ${isService ? "service" : ""}" aria-hidden="true">${isFuel ? "⛽" : isService ? "🔧" : "＋"}</div>
             <div><p class="entry-name">${escapeHtml(title)}</p><p class="entry-description">${escapeHtml(details || "추가 정보 없음")}</p></div>
             <div class="entry-right">
-              <div class="entry-amount"><strong>${formatNumber(entry.amount)}원</strong><span>${isFuel ? (entry.estimatedAmount ? "주유비(추정)" : "주유비") : isService ? "정비비" : "유지비"}</span></div>
+              <div class="entry-amount"><strong>${formatNumber(entry.amount)}원</strong><span>${isFuel ? "주유비" : isService ? "정비비" : "유지비"}</span></div>
               <div class="entry-actions">
                 <button class="icon-button" type="button" data-action="edit" data-id="${escapeHtml(entry.id)}" aria-label="${escapeHtml(title)} 내역 수정">✎</button>
                 <button class="icon-button delete" type="button" data-action="delete" data-id="${escapeHtml(entry.id)}" aria-label="${escapeHtml(title)} 내역 삭제">×</button>
@@ -1515,9 +1280,7 @@
         renderVehicleSelector();
         renderVehicle();
         renderSummary();
-        renderStations();
         renderConsumables();
-        renderInspectionReminder();
         renderEntries();
       }
 
@@ -1559,12 +1322,6 @@
         $("#expenseCategoryField").classList.toggle("hidden", type !== "expense");
         $("#expenseCategory").required = type === "expense";
         $("#entryCategory").required = type === "service";
-        const amountInput = $("#entryAmount");
-        const isFuelType = type === "fuel";
-        amountInput.required = !isFuelType;
-        amountInput.placeholder = isFuelType ? "비우면 평균으로 추정" : "0";
-        $("#amountRequiredMark").classList.toggle("hidden", isFuelType);
-        $("#fuelEstimateNote").classList.toggle("hidden", !isFuelType);
         updateServiceCategoryOptions();
         $("#serviceLinkNote").classList.toggle("hidden", type !== "service");
         updateFuelMetrics();
@@ -1667,36 +1424,15 @@
         if (!entryForm.reportValidity()) return;
         const type = $("#entryType").value;
         const isEditing = Boolean(editingId);
-        const amountRaw = $("#entryAmount").value;
-        const mileageValue = $("#entryMileage").value;
-        const volumeValue = $("#entryVolume").value;
-        let amount = Number(amountRaw);
-        let estimatedAmount = false;
-        let estimateReason = "";
-        if (type === "fuel" && amountRaw === "") {
-          if (mileageValue === "" && volumeValue === "") {
-            $("#entryAmount").setCustomValidity("금액이 없으면 주행거리 또는 주유량 중 하나는 입력해 주세요.");
-            $("#entryAmount").reportValidity();
-            $("#entryAmount").setCustomValidity("");
-            return;
-          }
-          const estimated = estimateFuelAmountFromMileage(mileageValue === "" ? NaN : mileageValue, volumeValue, editingId);
-          if (!estimated.amount || !(estimated.amount > 0)) {
-            $("#entryAmount").setCustomValidity(estimated.reason || "평균으로 추정할 수 없어 금액을 직접 입력해 주세요.");
-            $("#entryAmount").reportValidity();
-            $("#entryAmount").setCustomValidity("");
-            return;
-          }
-          amount = estimated.amount;
-          estimatedAmount = true;
-          estimateReason = estimated.reason;
-        }
+        const amount = Number($("#entryAmount").value);
         if (!Number.isFinite(amount) || amount <= 0) {
           $("#entryAmount").setCustomValidity("금액은 1원 이상 입력해 주세요.");
           $("#entryAmount").reportValidity();
           $("#entryAmount").setCustomValidity("");
           return;
         }
+        const mileageValue = $("#entryMileage").value;
+        const volumeValue = $("#entryVolume").value;
         const entry = {
           id: editingId || (crypto.randomUUID ? crypto.randomUUID() : `entry-${Date.now()}-${Math.random().toString(36).slice(2)}`),
           type,
@@ -1705,10 +1441,9 @@
           mileage: type === "expense" || mileageValue === "" ? null : Number(mileageValue),
           memo: $("#entryMemo").value.trim()
         };
-        if (estimatedAmount) entry.estimatedAmount = true;
         if (type === "fuel" && volumeValue !== "") entry.volume = Number(volumeValue);
         if (type === "fuel") {
-          entry.fuelKind = data.vehicle.fuel || "휘발유";
+          entry.fuelKind = data.vehicle.fuel;
           entry.fuelUnit = data.vehicle.fuel === "전기" ? "kWh" : "L";
           entry.station = $("#entryStation").value.trim();
           if (data.vehicle.fuel === "LPG") entry.fullTank = $("#entryFullTank").checked;
@@ -1747,7 +1482,7 @@
         if (!saved) return;
         render();
         resetEntryForm();
-        showToast(estimatedAmount ? `평균값으로 약 ${formatNumber(amount)}원 추정했어요. (${estimateReason})` : isEditing ? "내역을 수정했어요." : "내역을 저장했어요.");
+        showToast(isEditing ? "내역을 수정했어요." : "내역을 저장했어요.");
       });
 
       $("#entriesList").addEventListener("click", (event) => {
@@ -1794,24 +1529,10 @@
         $("#carAcquisitionMileageInput").value = data.vehicle.acquisitionMileage ?? "";
         $("#carMileageInput").value = data.vehicle.mileage ?? "";
         $("#carPurchaseDateInput").value = data.vehicle.purchaseDate || "";
-        $("#carTankCapacityInput").value = data.vehicle.tankCapacity ?? "";
-        $("#carSidoInput").value = data.vehicle.sido || "";
-        $("#carInsuranceExpiryInput").value = data.vehicle.insuranceExpiry || "";
-        $("#carInspectionExpiryInput").value = data.vehicle.inspectionExpiry || "";
-        $("#carTireSpecInput").value = data.vehicle.tireSpec || "";
-        $("#carMemoInput").value = data.vehicle.vehicleMemo || "";
-        $("#carVinInput").value = data.vehicle.vin || "";
-        $("#carDisplacementInput").value = data.vehicle.displacement ?? "";
-        $("#carVehicleTypeInput").value = data.vehicle.vehicleType || "";
-        $("#carUsageTypeInput").value = data.vehicle.usageType || "";
-        $("#carFirstRegistrationDateInput").value = data.vehicle.firstRegistrationDate || "";
         $("#carAcquisitionMileageInput").setCustomValidity("");
         $("#carMileageInput").setCustomValidity("");
         syncAcquisitionAndCurrentMileage();
         $("#carPurchaseDateInput").max = localToday();
-        $("#carFirstRegistrationDateInput").max = localToday();
-        $("#carInsuranceExpiryInput").min = localToday();
-        $("#carInspectionExpiryInput").min = localToday();
         vehicleDialog.showModal();
       }
 
@@ -1830,24 +1551,10 @@
         $("#carAcquisitionMileageInput").value = "";
         $("#carMileageInput").value = "0";
         $("#carPurchaseDateInput").value = "";
-        $("#carTankCapacityInput").value = "";
-        $("#carSidoInput").value = "";
-        $("#carInsuranceExpiryInput").value = "";
-        $("#carInspectionExpiryInput").value = "";
-        $("#carTireSpecInput").value = "";
-        $("#carMemoInput").value = "";
-        $("#carVinInput").value = "";
-        $("#carDisplacementInput").value = "";
-        $("#carVehicleTypeInput").value = "";
-        $("#carUsageTypeInput").value = "";
-        $("#carFirstRegistrationDateInput").value = "";
         $("#carAcquisitionMileageInput").setCustomValidity("");
         $("#carMileageInput").setCustomValidity("");
         syncAcquisitionAndCurrentMileage();
         $("#carPurchaseDateInput").max = localToday();
-        $("#carFirstRegistrationDateInput").max = localToday();
-        $("#carInsuranceExpiryInput").min = localToday();
-        $("#carInspectionExpiryInput").min = localToday();
         vehicleDialog.showModal();
       });
 
@@ -1938,20 +1645,8 @@
             ? "인수일은 오늘 또는 과거 날짜로 입력해 주세요."
             : ""
         );
-        $("#carTankCapacityInput").setCustomValidity(
-          $("#carTankCapacityInput").value !== "" && !(Number($("#carTankCapacityInput").value) > 0)
-            ? "탱크 용량은 1L 이상 입력해 주세요."
-            : ""
-        );
-        $("#carFirstRegistrationDateInput").setCustomValidity(
-          $("#carFirstRegistrationDateInput").value && $("#carFirstRegistrationDateInput").value > localToday()
-            ? "최초등록일은 오늘 또는 과거 날짜로 입력해 주세요."
-            : ""
-        );
         if (!form.reportValidity()) return;
-        const fuel = $("#carFuelInput").value || "휘발유";
-        const tankCapacity = $("#carTankCapacityInput").value === "" ? null : Number($("#carTankCapacityInput").value);
-        const displacement = $("#carDisplacementInput").value === "" ? null : Number($("#carDisplacementInput").value);
+        const fuel = $("#carFuelInput").value;
         const nextData = creatingVehicle ? createEmptyData() : JSON.parse(JSON.stringify(data));
         nextData.vehicle = {
           name: $("#carNameInput").value.trim(),
@@ -1967,18 +1662,7 @@
           mileageDate: creatingVehicle || mileage !== Number(data.vehicle.mileage) || !data.vehicle.mileageDate
             ? localToday()
             : data.vehicle.mileageDate,
-          fuelSinceDate: creatingVehicle || fuel !== data.vehicle.fuel ? localToday() : data.vehicle.fuelSinceDate,
-          tankCapacity,
-          sido: $("#carSidoInput").value,
-          insuranceExpiry: $("#carInsuranceExpiryInput").value,
-          inspectionExpiry: $("#carInspectionExpiryInput").value,
-          tireSpec: $("#carTireSpecInput").value.trim(),
-          vehicleMemo: $("#carMemoInput").value.trim(),
-          vin: $("#carVinInput").value.trim(),
-          displacement,
-          vehicleType: $("#carVehicleTypeInput").value,
-          usageType: $("#carUsageTypeInput").value,
-          firstRegistrationDate: $("#carFirstRegistrationDateInput").value
+          fuelSinceDate: creatingVehicle || fuel !== data.vehicle.fuel ? localToday() : data.vehicle.fuelSinceDate
         };
         if (creatingVehicle) {
           const newVehicleId = createVehicleId();
@@ -2000,9 +1684,7 @@
         updateServiceCategoryOptions();
         renderVehicle();
         renderSummary();
-        renderStations();
         renderConsumables();
-        renderInspectionReminder();
         updateFuelMetrics();
         closeVehicleDialog();
         showToast("차량 정보를 저장했어요.");
@@ -2176,19 +1858,7 @@
           `연식: ${data.vehicle.year ? `${data.vehicle.year}년` : "미등록"}`,
           `세부 모델·트림: ${data.vehicle.trim || "미등록"}`,
           `변속기: ${data.vehicle.transmission || "미등록"}`,
-          `기본 연료: ${data.vehicle.fuel || "휘발유"}`,
-          `연료탱크 용량: ${data.vehicle.tankCapacity ? `${formatNumber(data.vehicle.tankCapacity)} L` : "미등록"}`,
-          `관심 지역: ${data.vehicle.sido || "미등록"}`,
-          `보험 만료일: ${data.vehicle.insuranceExpiry || "미등록"}`,
-          `검사 만료일: ${data.vehicle.inspectionExpiry || "미등록"}`,
-          `타이어 규격: ${data.vehicle.tireSpec || "미등록"}`,
-          `차량 메모: ${data.vehicle.vehicleMemo || "미등록"}`,
-          `차대번호: ${data.vehicle.vin || "미등록"}`,
-          `배기량: ${data.vehicle.displacement ? `${formatNumber(data.vehicle.displacement)} cc` : "미등록"}`,
-          `차종: ${data.vehicle.vehicleType || "미등록"}`,
-          `용도: ${data.vehicle.usageType || "미등록"}`,
-          `최초등록일: ${data.vehicle.firstRegistrationDate || "미등록"}`,
-          `검사유효기간 만료일: ${data.vehicle.inspectionExpiry || "미등록"}`,
+          `기본 연료: ${data.vehicle.fuel || "미등록"}`,
           `공인연비 (등록원부 표기): ${data.vehicle.officialEconomy || "미등록"}`,
           `인수일: ${data.vehicle.purchaseDate || "미등록"}`,
           `인수 당시 주행거리: ${data.vehicle.acquisitionMileage == null ? "미등록" : `${formatNumber(data.vehicle.acquisitionMileage)} km`}`,
@@ -2211,15 +1881,6 @@
           const change = getLatestConsumableChange(item.id);
           lines.push(`${item.name}: ${change ? `${change.date} / ${formatNumber(change.mileage)} km` : "기록 없음"}`);
         });
-        lines.push("", "[주유소 최저가 (내 기록)]");
-        const stationStats = getStationStats();
-        if (!stationStats.stations.length) {
-          lines.push("주유소별 단가를 계산할 기록이 부족합니다.");
-        } else {
-          stationStats.stations.slice(0, 5).forEach((record, index) => {
-            lines.push(`${index + 1}위 ${record.name}: 평균 ${formatNumber(Math.round(record.avgUnitPrice))}원 · ${record.count}회`);
-          });
-        }
         lines.push("", "[주유·정비·차량 유지비 내역]");
         const entries = [...data.entries].sort((a, b) => a.date.localeCompare(b.date));
         if (!entries.length) lines.push("등록된 내역이 없습니다.");
@@ -2228,8 +1889,8 @@
           const metrics = fuel ? calculateFuelMetrics(entry) : null;
           const fields = [
             entry.date,
-            fuel ? `주유 (${entry.fuelKind || data.vehicle.fuel || "휘발유"})${entry.fullTank ? " · 가득 충전" : ""}${entry.estimatedAmount ? " · 금액추정" : ""}` : entry.type === "service" ? getServiceCategoryName(entry) : getExpenseCategoryName(entry),
-            `${formatNumber(entry.amount)}원${entry.estimatedAmount ? "(추정)" : ""}`,
+            fuel ? `주유 (${entry.fuelKind || data.vehicle.fuel || "연료 미상"})${entry.fullTank ? " · 가득 충전" : ""}` : entry.type === "service" ? getServiceCategoryName(entry) : getExpenseCategoryName(entry),
+            `${formatNumber(entry.amount)}원`,
             entry.volume ? `${entry.volume} ${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             entry.mileage != null ? `${formatNumber(entry.mileage)} km` : "",
             metrics?.efficiency ? `${metrics.efficiency.toFixed(1)} km/L` : "",

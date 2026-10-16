@@ -123,7 +123,8 @@
     .car-odometer-label { color: #a9c8b9; font-size: 11px; }
     .car-odometer-value { font-size: 30px; font-weight: 760; letter-spacing: -.8px; }
     .car-odometer-value small { margin-left: 4px; color: #c5d9cf; font-size: 13px; font-weight: 550; letter-spacing: 0; }
-    .car-driven { position: relative; z-index: 1; margin: 8px 0 0; color: #d3e4db; font-size: 11px; }
+    .car-acquired { position: relative; z-index: 1; margin: 8px 0 0; color: #a9c8b9; font-size: 11px; }
+    .car-driven { position: relative; z-index: 1; margin: 4px 0 0; color: #d3e4db; font-size: 11px; }
     .car-odometer-block { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 21px; }
     .car-odometer-read { min-width: 0; }
     .car-odometer-read .car-odometer-label { display: block; }
@@ -140,9 +141,11 @@
       z-index: 1;
       display: inline-flex;
       align-items: center;
+      flex: 0 0 auto;
       gap: 6px;
       min-height: 34px;
       padding: 0 10px;
+      white-space: nowrap;
       border: 1px solid rgba(255,255,255,.2);
       border-radius: 8px;
       background: rgba(255,255,255,.06);
@@ -150,10 +153,14 @@
       font-size: 12px;
     }
     .edit-car:hover { background: rgba(255,255,255,.13); }
-    .car-meta { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 25px; }
+    .car-meta { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 25px; }
     .car-detail { position: relative; z-index: 1; margin: 8px 0 0; color: #d3e4db; font-size: 11px; }
+    .car-maintenance { position: relative; z-index: 1; margin: 18px 0 0; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.14); color: #d3e4db; font-size: 11px; line-height: 1.5; }
+    .car-maintenance:empty { display: none; }
+    .car-maintenance.warn { color: #ffd7a1; font-weight: 650; }
     .car-meta-item { min-width: 0; padding-right: 16px; }
     .car-meta-item + .car-meta-item { padding-left: 24px; border-left: 1px solid rgba(255,255,255,.16); }
+    .car-meta-item:nth-child(3n + 1) { padding-left: 0; border-left: 0; }
     .meta-label { display: block; margin-bottom: 7px; color: #a9c8b9; font-size: 11px; }
     .meta-value { font-size: 14px; font-weight: 650; }
     .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 17px 0 24px; }
@@ -209,6 +216,8 @@
     .checkbox-field { display: flex; align-items: center; gap: 7px; margin: -3px 0 13px; color: #59675f; font-size: 11px; }
     .checkbox-field input { accent-color: var(--green); }
     .help-note { margin: -5px 0 12px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .save-status { margin: 0 0 14px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .save-status.warn { color: var(--amber); font-weight: 650; }
     .content-grid { display: grid; grid-template-columns: minmax(280px, 350px) minmax(0, 1fr); align-items: start; gap: 18px; }
     .panel { border: 1px solid var(--line); border-radius: 15px; background: var(--surface); box-shadow: var(--shadow); }
     .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 19px 21px 16px; border-bottom: 1px solid #f0f3f1; }
@@ -259,6 +268,7 @@
     .entry-icon { display: grid; width: 37px; height: 37px; place-items: center; border-radius: 11px; background: var(--green-soft); color: var(--green); font-size: 16px; }
     .entry-icon.service { background: var(--amber-soft); color: var(--amber); }
     .entry-name { overflow: hidden; margin: 0; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .entry-badge { display: inline-block; margin-left: 6px; padding: 2px 7px; border-radius: 20px; background: #fff2d8; color: #936212; font-size: 9px; font-weight: 750; vertical-align: 1px; }
     .entry-description { overflow: hidden; margin: 5px 0 0; color: var(--muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
     .entry-right { display: flex; align-items: flex-end; gap: 8px; }
     .entry-amount { text-align: right; white-space: nowrap; }
@@ -268,6 +278,34 @@
     .icon-button { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 7px; background: transparent; color: #91a097; font-size: 12px; }
     .icon-button:hover { background: #f2f5f3; color: var(--ink); }
     .icon-button.delete:hover { background: #fff0ed; color: #c75c49; }
+    .monthly-panel { margin: 0 0 24px; }
+    .monthly-chart { display: flex; align-items: flex-end; gap: 10px; padding: 22px 21px 14px; }
+    .monthly-column { display: flex; flex: 1; min-width: 0; flex-direction: column; align-items: center; gap: 8px; }
+    .monthly-bar-area { display: flex; align-items: flex-end; justify-content: center; width: 100%; height: 132px; }
+    .monthly-bar { display: flex; width: 100%; max-width: 46px; min-height: 3px; flex-direction: column-reverse; overflow: hidden; border-radius: 7px; background: #eef2f0; }
+    .monthly-seg { display: block; width: 100%; }
+    .monthly-seg.fuel { background: linear-gradient(180deg, #58b88d, #2f8f68); }
+    .monthly-seg.service { background: linear-gradient(180deg, #f3c57a, #d99b34); }
+    .monthly-seg.expense { background: linear-gradient(180deg, #c6d2cc, #9db0a8); }
+    .monthly-value { color: var(--muted); font-size: 10px; font-weight: 650; }
+    .monthly-label { color: var(--muted); font-size: 11px; font-weight: 600; }
+    .monthly-column.current .monthly-label { color: var(--green-dark); font-weight: 780; }
+    .monthly-legend { display: flex; flex-wrap: wrap; gap: 14px; padding: 0 21px 18px; color: var(--muted); font-size: 10px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-dot { display: inline-block; width: 9px; height: 9px; border-radius: 3px; }
+    .legend-dot.fuel { background: #3fa377; }
+    .legend-dot.service { background: #e0a640; }
+    .legend-dot.expense { background: #b0bfb8; }
+    .input-with-action { display: flex; align-items: stretch; gap: 8px; }
+    .input-with-action .input { flex: 1; min-width: 0; }
+    .favorite-toggle { flex: 0 0 auto; width: 42px; border: 1px solid var(--line); border-radius: 10px; background: #f7faf8; color: #c3cec8; font-size: 15px; line-height: 1; }
+    .favorite-toggle.active { border-color: #e8c98a; background: #fff7e6; color: #d99b34; }
+    .favorite-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .favorite-chip { display: inline-flex; align-items: center; overflow: hidden; border: 1px solid #e0ebe5; border-radius: 20px; background: #f7faf8; }
+    .favorite-chip-name { padding: 5px 10px; border: 0; background: transparent; color: var(--green-dark); font-size: 10px; font-weight: 650; }
+    .favorite-chip-name:hover { background: #eef6f1; }
+    .favorite-chip-remove { padding: 5px 8px 5px 4px; border: 0; background: transparent; color: #9aa8a2; font-size: 11px; }
+    .favorite-chip-remove:hover { color: #c0453f; }
     .empty-state { padding: 56px 20px; text-align: center; }
     .empty-illustration { display: grid; width: 48px; height: 48px; margin: 0 auto 13px; place-items: center; border-radius: 15px; background: #f1f5f2; color: #7f9b8c; font-size: 21px; }
     .empty-state strong { display: block; font-size: 13px; }
@@ -337,9 +375,12 @@
       .car-odometer-block { align-items: stretch; flex-direction: column; margin-top: 16px; }
       .odometer-quick-input { max-width: none; }
       .car-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+      .monthly-chart { gap: 6px; padding: 18px 14px 12px; }
+      .monthly-bar-area { height: 108px; }
+      .monthly-legend { padding: 0 14px 16px; gap: 10px; }
       .car-meta-item { padding-right: 8px; }
       .car-meta-item + .car-meta-item { padding-left: 8px; }
-      .car-meta-item:nth-child(3) { padding-left: 0; border-left: 0; }
+      .car-meta-item:nth-child(odd) { padding-left: 0; border-left: 0; }
       .meta-value { font-size: 12px; }
       .summary-grid { gap: 8px; }
       .summary-card { min-height: 105px; padding: 12px; }
@@ -386,9 +427,11 @@
           <button class="button button-small" id="exportButton" type="button" aria-label="복원용 JSON 백업 저장"><span class="desktop-label">JSON 백업</span><span class="mobile-label">JSON</span></button>
           <button class="button button-small" id="importButton" type="button" aria-label="JSON 백업 복원"><span class="desktop-label">JSON 복원</span><span class="mobile-label">복원</span></button>
           <input class="hidden" id="importFileInput" type="file" accept="application/json,.json">
+          <button class="button button-small" id="icsExportButton" type="button" aria-label="검사·보험·소모품 일정을 캘린더 파일로 저장"><span class="desktop-label">캘린더</span><span class="mobile-label">일정</span></button>
           <button class="button button-primary" id="focusEntryButton" type="button">＋ 내역 추가</button>
         </div>
       </section>
+      <p class="save-status" id="saveStatus"></p>
       <section class="vehicle-switcher" aria-label="차량 선택 및 관리">
         <label class="sr-only" for="vehicleSelect">관리할 차량 선택</label>
         <select class="input" id="vehicleSelect" aria-label="관리할 차량 선택"></select>
@@ -418,18 +461,21 @@
           <div class="car-odometer-read">
             <span class="car-odometer-label">현재 주행거리 (계기판)</span>
             <strong class="car-odometer-value" id="vehicleMileage">미등록</strong>
-            <p class="car-driven" id="vehicleDistanceDriven">인수 당시 주행거리 미등록</p>
+            <p class="car-acquired" id="vehicleAcquiredInfo">인수 당시 주행거리 미등록</p>
+            <p class="car-driven" id="vehicleDistanceDriven">인수 후 주행거리 미등록</p>
           </div>
           <form class="odometer-quick" id="odometerQuickForm">
             <label class="car-odometer-label" for="quickMileageInput">계기판 · 주유비 빠른 입력</label>
             <div class="odometer-quick-row">
+              <div class="odometer-quick-input"><input class="input" id="quickDateInput" type="date" aria-label="주유 날짜"></div>
               <div class="input-with-suffix odometer-quick-input"><input class="input" id="quickMileageInput" type="number" min="0" step="1" placeholder="계기판 숫자"><span class="suffix">km</span></div>
               <div class="input-with-suffix odometer-quick-input"><input class="input" id="quickFuelAmountInput" type="number" min="1" step="1" placeholder="주유비"><span class="suffix">원</span></div>
               <button class="edit-car" type="submit">저장</button>
             </div>
-            <p class="odometer-quick-note">주유비는 비우면 평균으로 자동 추정해요.</p>
+            <p class="odometer-quick-note">주유비 비우면 산출로 자동 기록 · 날짜 늦게 넣어도 돼요.</p>
           </form>
         </div>
+        <p class="car-maintenance" id="vehicleMaintenanceHint"></p>
         <div class="car-meta">
           <div class="car-meta-item"><span class="meta-label">연식</span><strong class="meta-value" id="vehicleYear">2022년</strong></div>
           <div class="car-meta-item"><span class="meta-label">차량 기본 연료</span><strong class="meta-value" id="vehicleFuel">휘발유</strong></div>
@@ -458,6 +504,18 @@
           <div class="summary-heading"><span>유지비 합계</span><span class="summary-icon amber" aria-hidden="true">＋</span></div>
           <div class="summary-number" id="otherExpense">0<small>원</small></div>
         </article>
+      </section>
+
+      <section class="panel monthly-panel" aria-labelledby="monthlyHeading">
+        <div class="panel-header">
+          <div><h2 class="panel-title" id="monthlyHeading">월별 지출</h2><p class="panel-subtitle" id="monthlySubtitle">최근 6개월 주유·정비·유지비 흐름</p></div>
+        </div>
+        <div class="monthly-chart" id="monthlyChart" aria-live="polite"></div>
+        <div class="monthly-legend">
+          <span class="legend-item"><i class="legend-dot fuel" aria-hidden="true"></i>주유비</span>
+          <span class="legend-item"><i class="legend-dot service" aria-hidden="true"></i>정비비</span>
+          <span class="legend-item"><i class="legend-dot expense" aria-hidden="true"></i>유지비</span>
+        </div>
       </section>
 
       <section class="economy-panel" aria-labelledby="economyHeading">
@@ -517,7 +575,7 @@
               <label class="form-label" for="entryAmount"><span id="entryAmountLabel">금액</span><span class="required" id="amountRequiredMark">*</span></label>
               <div class="input-with-suffix"><input class="input" id="entryAmount" name="amount" type="number" min="1" step="1" placeholder="0" required><span class="suffix">원</span></div>
             </div>
-            <p class="help-note hidden full-width" id="fuelEstimateNote">주유비는 비워 두면 주행거리 기준으로 평균 단가·평균 연비로 자동 추정해요. 추정값은 목록에 ‘추정’ 표시가 붙어요.</p>
+            <p class="help-note hidden full-width" id="fuelEstimateNote">주유비는 비워 두면 주행거리 기준으로 평균 단가·평균 연비로 자동 산출해요. 산출값은 목록에 노란 ‘산출’ 뱃지가 붙어요.</p>
             <div class="form-field" id="fuelVolumeField">
               <label class="form-label" for="entryVolume"><span id="entryVolumeLabel">주유량</span><span class="required hidden" id="volumeRequiredMark">*</span></label>
               <div class="input-with-suffix"><input class="input" id="entryVolume" name="volume" type="number" min="0.1" step="0.1" placeholder="선택 입력"><span class="suffix" id="entryVolumeUnit">L</span></div>
@@ -556,12 +614,21 @@
             <p class="help-note hidden full-width" id="serviceLinkNote">소모품 항목을 선택하고 저장하면 마지막 교환 기록이 자동 갱신돼요.</p>
             <div class="form-field hidden" id="fuelStationField">
               <label class="form-label" for="entryStation">주유소·충전소</label>
-              <input class="input" id="entryStation" type="text" maxlength="80" placeholder="선택 입력" list="stationDatalist" autocomplete="off">
+              <div class="input-with-action">
+                <input class="input" id="entryStation" type="text" maxlength="80" placeholder="선택 입력" list="stationDatalist" autocomplete="off">
+                <button class="favorite-toggle" id="stationFavoriteButton" type="button" aria-label="주유소 즐겨찾기 추가·해제" title="즐겨찾기 추가·해제">★</button>
+              </div>
               <datalist id="stationDatalist"></datalist>
+              <div class="favorite-chips" id="stationFavorites"></div>
             </div>
             <div class="form-field hidden" id="serviceShopField">
               <label class="form-label" for="entryShop">정비소</label>
-              <input class="input" id="entryShop" type="text" maxlength="80" placeholder="선택 입력">
+              <div class="input-with-action">
+                <input class="input" id="entryShop" type="text" maxlength="80" placeholder="선택 입력" list="shopDatalist" autocomplete="off">
+                <button class="favorite-toggle" id="shopFavoriteButton" type="button" aria-label="정비소 즐겨찾기 추가·해제" title="즐겨찾기 추가·해제">★</button>
+              </div>
+              <datalist id="shopDatalist"></datalist>
+              <div class="favorite-chips" id="shopFavorites"></div>
             </div>
             <div class="form-field hidden full-width" id="serviceDetailsField">
               <label class="form-label" for="entryDetails">작업 내용</label>
@@ -696,6 +763,8 @@
       "use strict";
 
       const STORAGE_KEY = "chagibu-data-v1";
+      const META_KEY = "chagibu-meta-v1";
+      const PLACE_LIMIT = 40;
       const LEGACY_SAMPLE_IDS = new Set(["sample-1", "sample-2", "sample-3"]);
       const CONSUMABLES = [
         { id: "engineOil", name: "엔진오일", km: 8000, months: 12 },
@@ -722,7 +791,9 @@
         vehicle: { name: "", plate: "", year: "", fuel: "휘발유", officialEconomy: null, trim: "", transmission: "", acquisitionMileage: null, mileage: 0, purchaseDate: "", mileageDate: "", fuelSinceDate: "", tankCapacity: null, sido: "", insuranceExpiry: "", inspectionExpiry: "", tireSpec: "", vehicleMemo: "", vin: "", displacement: null, vehicleType: "", usageType: "", firstRegistrationDate: "", manualUnitPrice: null },
         entries: [],
         consumableChanges: [],
-        consumableSettings: {}
+        consumableSettings: {},
+        favoriteStations: [],
+        favoriteShops: []
       });
       const createVehicleId = () => crypto.randomUUID
         ? crypto.randomUUID()
@@ -740,6 +811,7 @@
       let vehicles = [];
       let activeVehicleId = "";
       let data = loadData();
+      let meta = loadMeta();
       let activeFilter = "all";
       let searchQuery = "";
       let sortNewestFirst = true;
@@ -821,6 +893,25 @@
         }) && ids.has(value.activeVehicleId);
       }
 
+      function normalizePlaceList(list) {
+        if (!Array.isArray(list)) return [];
+        const seen = new Set();
+        const result = [];
+        list.forEach((raw) => {
+          if (typeof raw !== "string") return;
+          const name = raw.trim().slice(0, 80);
+          if (!name || seen.has(name)) return;
+          seen.add(name);
+          result.push(name);
+        });
+        return result.slice(0, PLACE_LIMIT);
+      }
+
+      function isValidPlaceList(list) {
+        return list == null || (Array.isArray(list) && list.length <= PLACE_LIMIT &&
+          list.every((name) => typeof name === "string" && name.trim().length > 0 && name.length <= 80));
+      }
+
       function normalizeData(value) {
         if (!value.vehicle.fuel) value.vehicle.fuel = "휘발유";
         value.vehicle.acquisitionMileage ??= null;
@@ -845,6 +936,8 @@
         value.vehicle.manualUnitPrice ??= null;
         value.consumableChanges ??= [];
         value.consumableSettings ??= {};
+        value.favoriteStations = normalizePlaceList(value.favoriteStations);
+        value.favoriteShops = normalizePlaceList(value.favoriteShops);
         value.entries.forEach((entry) => {
           if (entry.type === "fuel" && entry.fuelUnit == null) {
             entry.fuelUnit = entry.fuelKind === "전기" ? "kWh" : "L";
@@ -904,6 +997,7 @@
           if (entry.type === "expense" && !EXPENSE_CATEGORIES.some((category) => category.id === entry.expenseCategory)) return false;
           if (entry.fullTank != null && typeof entry.fullTank !== "boolean") return false;
           if (entry.estimatedAmount != null && typeof entry.estimatedAmount !== "boolean") return false;
+          if (entry.estimateNote != null && (typeof entry.estimateNote !== "string" || entry.estimateNote.length > 200)) return false;
           if (entry.fuelKind != null && typeof entry.fuelKind !== "string") return false;
           if (entry.fuelUnit != null && !["L", "kWh"].includes(entry.fuelUnit)) return false;
           if (entry.expenseCategory != null && !EXPENSE_CATEGORIES.some((category) => category.id === entry.expenseCategory)) return false;
@@ -922,6 +1016,8 @@
           (settings.months == null || (Number.isFinite(Number(settings.months)) && Number(settings.months) > 0)) &&
           (!settings.enabled || settings.km != null || settings.months != null)
         )) return false;
+        if (!isValidPlaceList(value.favoriteStations)) return false;
+        if (!isValidPlaceList(value.favoriteShops)) return false;
         return (value.consumableChanges || []).every((change) =>
           change && typeof change.id === "string" &&
           CONSUMABLES.some((item) => item.id === change.itemId) &&
@@ -938,6 +1034,72 @@
         return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
       }
 
+      function loadMeta() {
+        const fallback = { lastSavedAt: null, lastBackupAt: null };
+        try {
+          const raw = localStorage.getItem(META_KEY);
+          if (!raw) return fallback;
+          const parsed = JSON.parse(raw);
+          return {
+            lastSavedAt: typeof parsed?.lastSavedAt === "string" ? parsed.lastSavedAt : null,
+            lastBackupAt: typeof parsed?.lastBackupAt === "string" ? parsed.lastBackupAt : null
+          };
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function saveMeta() {
+        try {
+          localStorage.setItem(META_KEY, JSON.stringify(meta));
+          return true;
+        } catch (error) {
+          console.error("저장 상태 정보를 기록하지 못했습니다.", error);
+          return false;
+        }
+      }
+
+      function formatDateTime(iso) {
+        if (!iso) return "";
+        const date = new Date(iso);
+        if (Number.isNaN(date.getTime())) return "";
+        const pad = (value) => String(value).padStart(2, "0");
+        return `${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      }
+
+      function daysSinceIso(iso) {
+        if (!iso) return null;
+        const date = new Date(iso);
+        if (Number.isNaN(date.getTime())) return null;
+        return Math.floor((Date.now() - date.getTime()) / 86400000);
+      }
+
+      function renderSaveStatus() {
+        const element = $("#saveStatus");
+        if (!element) return;
+        if (storageIssue) {
+          element.classList.add("hidden");
+          return;
+        }
+        element.classList.remove("hidden");
+        const parts = [meta.lastSavedAt ? `마지막 저장 ${formatDateTime(meta.lastSavedAt)}` : "아직 저장된 기록이 없어요"];
+        const backupDays = daysSinceIso(meta.lastBackupAt);
+        let warn = false;
+        if (!meta.lastBackupAt) {
+          parts.push("백업한 적이 없어요 · JSON 백업 버튼으로 파일을 한 번 내려받아 두세요");
+          warn = true;
+        } else if (backupDays != null && backupDays <= 0) {
+          parts.push("오늘 백업 완료");
+        } else if (backupDays != null && backupDays < 7) {
+          parts.push(`${backupDays}일 전 백업`);
+        } else if (backupDays != null) {
+          parts.push(`백업한 지 ${backupDays}일 지났어요 · JSON 백업을 다시 받아 두세요`);
+          warn = true;
+        }
+        element.textContent = parts.join(" · ");
+        element.classList.toggle("warn", warn);
+      }
+
       function saveData(nextData) {
         if (storageIssue) {
           showToast("저장 데이터 상태를 먼저 확인해 주세요. 입력 내용은 화면에 보존되어 있습니다.", true);
@@ -950,6 +1112,9 @@
           localStorage.setItem(STORAGE_KEY, JSON.stringify(makeBackup(nextVehicles)));
           vehicles = nextVehicles;
           data = nextData;
+          meta.lastSavedAt = new Date().toISOString();
+          saveMeta();
+          renderSaveStatus();
           return true;
         } catch (error) {
           console.error("차계부 데이터를 저장하지 못했습니다.", error);
@@ -1096,6 +1261,35 @@
         return { status, label, remaining, expectedDate, detail };
       }
 
+      function getMaintenanceHint(averageKm) {
+        let best = null;
+        CONSUMABLES.filter((item) => isConsumableApplicable(item.id)).forEach((item) => {
+          const result = getConsumableStatus(item, getLatestConsumableChange(item.id), averageKm);
+          if (result.status === "untracked") return;
+          const rank = result.status === "overdue" ? 0 : result.status === "warning" ? 1 : 2;
+          const days = result.expectedDate ? daysUntil(result.expectedDate) : Number.POSITIVE_INFINITY;
+          const remaining = result.remaining == null ? Number.POSITIVE_INFINITY : result.remaining;
+          const candidate = { rank, days, remaining, item, result };
+          if (!best || rank < best.rank) {
+            best = candidate;
+            return;
+          }
+          if (rank > best.rank) return;
+          if (remaining < best.remaining || (remaining === best.remaining && days < best.days)) best = candidate;
+        });
+        return best;
+      }
+
+      function buildMaintenanceHintText(hint) {
+        if (!hint) return "소모품 교환 기록을 넣으면 다음 교체 시기를 여기서 알려드려요.";
+        const { item, result } = hint;
+        if (result.status === "overdue") return `${item.name} 교체 시기가 지났어요 · ${result.detail}`;
+        const remainingText = result.remaining == null ? "" : `${formatNumber(Math.max(0, result.remaining))} km 남음`;
+        const dateText = result.expectedDate ? `예상 ${result.expectedDate.slice(0, 7).replace("-", ".")}` : "";
+        const summary = [remainingText, dateText].filter(Boolean).join(" · ");
+        return `다음 ${item.name} · ${summary || result.detail}`;
+      }
+
       function renderConsumables() {
         const averageKm = getMonthlyMileageAverage();
         const applicableItems = CONSUMABLES.filter((item) => isConsumableApplicable(item.id));
@@ -1179,8 +1373,23 @@
         $("#vehicleDistanceDriven").textContent = acquired == null
           ? `누적 주유비 ${formatNumber(fuelSinceTotal)}원 · 인수 당시 주행거리를 등록하면 누적 주행거리를 계산해요.`
           : `인수 후 ${formatNumber(Math.max(0, current - acquired))} km 주행 · 누적 주유비 ${formatNumber(fuelSinceTotal)}원`;
+        const acquiredInfo = $("#vehicleAcquiredInfo");
+        if (acquiredInfo) acquiredInfo.textContent = acquired == null
+          ? "인수 당시 주행거리 미등록"
+          : `인수 당시 ${formatNumber(acquired)} km`;
+        const maintenanceHint = $("#vehicleMaintenanceHint");
+        if (maintenanceHint) {
+          const hint = getMaintenanceHint(getMonthlyMileageAverage());
+          maintenanceHint.classList.toggle("warn", Boolean(hint) && hint.result.status !== "ok");
+          maintenanceHint.textContent = buildMaintenanceHintText(hint);
+        }
         const quickInput = $("#quickMileageInput");
         if (quickInput && !quickInput.value && current > 0) quickInput.placeholder = `예: ${formatNumber(current)} km`;
+        const quickDate = $("#quickDateInput");
+        if (quickDate) {
+          quickDate.max = localToday();
+          if (!quickDate.value) quickDate.value = localToday();
+        }
         const entryMileageInput = $("#entryMileage");
         if (entryMileageInput && !entryMileageInput.value && !editingId) {
           entryMileageInput.placeholder = current > 0 ? `계기판 입력 (현재 ${formatNumber(current)} km)` : "선택 입력";
@@ -1302,9 +1511,100 @@
             : "주유소 이름과 함께 주유량·금액을 기록하거나 기준 유가를 직접 입력하면 주유비 비교가 시작돼요.";
         const manualInput = $("#manualUnitPriceInput");
         if (manualInput && document.activeElement !== manualInput) manualInput.value = manualPrice ?? "";
-        const favorites = [...new Set(data.entries.map((entry) => (entry.station || "").trim()).filter(Boolean))].slice(0, 30);
-        const datalist = $("#stationDatalist");
-        if (datalist) datalist.innerHTML = favorites.map((name) => `<option value="${escapeHtml(name)}"></option>`).join("");
+      }
+
+      function getRecordedPlaces(field) {
+        const counts = new Map();
+        data.entries.forEach((entry) => {
+          const name = String(entry[field] || "").trim();
+          if (!name) return;
+          counts.set(name, (counts.get(name) || 0) + 1);
+        });
+        return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([name]) => name);
+      }
+
+      const PLACE_FIELDS = [
+        { list: "favoriteStations", field: "station", inputId: "entryStation", datalistId: "stationDatalist", chipsId: "stationFavorites", toggleId: "stationFavoriteButton", label: "주유소·충전소" },
+        { list: "favoriteShops", field: "shop", inputId: "entryShop", datalistId: "shopDatalist", chipsId: "shopFavorites", toggleId: "shopFavoriteButton", label: "정비소" }
+      ];
+
+      function syncFavoriteToggles() {
+        PLACE_FIELDS.forEach((config) => {
+          const input = $("#" + config.inputId);
+          const toggle = $("#" + config.toggleId);
+          if (!input || !toggle) return;
+          toggle.classList.toggle("active", (data[config.list] || []).includes(input.value.trim()));
+        });
+      }
+
+      function renderPlaces() {
+        PLACE_FIELDS.forEach((config) => {
+          const favorites = data[config.list] || [];
+          const recorded = getRecordedPlaces(config.field).filter((name) => !favorites.includes(name));
+          const datalist = $("#" + config.datalistId);
+          if (datalist) {
+            datalist.innerHTML = [...favorites, ...recorded].slice(0, PLACE_LIMIT)
+              .map((name) => `<option value="${escapeHtml(name)}"></option>`).join("");
+          }
+          const chips = $("#" + config.chipsId);
+          if (chips) {
+            chips.innerHTML = favorites.map((name) => `<span class="favorite-chip"><button class="favorite-chip-name" type="button" data-fill="${escapeHtml(name)}">★ ${escapeHtml(name)}</button><button class="favorite-chip-remove" type="button" data-remove="${escapeHtml(name)}" aria-label="${escapeHtml(name)} 즐겨찾기 해제">✕</button></span>`).join("");
+          }
+        });
+        syncFavoriteToggles();
+      }
+
+      function toggleFavorite(config) {
+        const input = $("#" + config.inputId);
+        const name = input ? input.value.trim() : "";
+        if (!name) {
+          showToast(`${config.label} 이름을 먼저 입력해 주세요.`, true);
+          return;
+        }
+        const nextData = JSON.parse(JSON.stringify(data));
+        const list = nextData[config.list] || [];
+        const index = list.indexOf(name);
+        if (index >= 0) {
+          list.splice(index, 1);
+        } else if (list.length >= PLACE_LIMIT) {
+          showToast(`즐겨찾기는 ${PLACE_LIMIT}개까지 저장할 수 있어요.`, true);
+          return;
+        } else {
+          list.push(name);
+        }
+        nextData[config.list] = list;
+        if (!saveData(nextData)) return;
+        render();
+        showToast(index >= 0 ? `즐겨찾기에서 뺐어요: ${name}` : `즐겨찾기에 추가했어요: ${name}`);
+      }
+
+      function removeFavorite(config, name) {
+        const nextData = JSON.parse(JSON.stringify(data));
+        nextData[config.list] = (nextData[config.list] || []).filter((item) => item !== name);
+        if (!saveData(nextData)) return;
+        render();
+        showToast(`즐겨찾기에서 뺐어요: ${name}`);
+      }
+
+      function bindPlaceFields() {
+        PLACE_FIELDS.forEach((config) => {
+          const input = $("#" + config.inputId);
+          const toggle = $("#" + config.toggleId);
+          const chips = $("#" + config.chipsId);
+          if (input) input.addEventListener("input", syncFavoriteToggles);
+          if (toggle) toggle.addEventListener("click", () => toggleFavorite(config));
+          if (chips) {
+            chips.addEventListener("click", (event) => {
+              const fill = event.target.closest("[data-fill]");
+              if (fill && input) {
+                input.value = fill.dataset.fill;
+                return;
+              }
+              const remove = event.target.closest("[data-remove]");
+              if (remove) removeFavorite(config, remove.dataset.remove);
+            });
+          }
+        });
       }
 
       function getFuelCostAverages(ignoreId = null) {
@@ -1344,7 +1644,7 @@
         const unitPrice = avgUnitPrice || manualPrice;
         const priceLabel = avgUnitPrice ? "평균 단가" : "직접 입력 시세";
         if (volumeValue !== "" && Number(volumeValue) > 0 && unitPrice) {
-          return { amount: Math.round(Number(volumeValue) * unitPrice), reason: `주유량 ${volumeValue}L × ${priceLabel}로 추정`, basis: "volume" };
+          return { amount: Math.round(Number(volumeValue) * unitPrice), reason: `주유량 ${volumeValue}L × ${priceLabel}로 산출`, basis: "volume" };
         }
         const prevMileages = data.entries
           .filter((entry) => entry.id !== ignoreId && Number.isFinite(Number(entry.mileage)) && Number(entry.mileage) < current)
@@ -1352,13 +1652,15 @@
         if (!prevMileages.length) return { amount: null, reason: "이전 주행거리 기록이 없어 추정할 수 없어요. 금액을 직접 입력해 주세요." };
         const distance = current - Math.max(...prevMileages);
         if (!(distance > 0)) return { amount: null, reason: "이전 주행거리보다 큰 값을 입력해 주세요." };
+        const fullTankRange = economyKmPerUnit ? (Number(data.vehicle.tankCapacity) > 0 ? Number(data.vehicle.tankCapacity) : 40) * economyKmPerUnit : 1000;
+        const gapNote = distance > fullTankRange ? " · 한 번 주유치고 구간이 길어요. 중간 주유를 나눠 입력하면 정확해져요" : "";
         if (economyKmPerUnit && unitPrice) {
           const volume = distance / economyKmPerUnit;
           const effUnit = data.vehicle.fuel === "전기" ? "km/kWh" : "km/L";
-          return { amount: Math.round(volume * unitPrice), reason: `${formatNumber(distance)} km ÷ 평균 ${economyKmPerUnit.toFixed(1)} ${effUnit} × ${priceLabel}로 추정`, basis: "economy" };
+          return { amount: Math.round(volume * unitPrice), reason: `${formatNumber(distance)} km ÷ 평균 ${economyKmPerUnit.toFixed(1)} ${effUnit} × ${priceLabel}로 산출${gapNote}`, basis: "economy" };
         }
         if (costPerKm) {
-          return { amount: Math.round(distance * costPerKm), reason: `${formatNumber(distance)} km × km당 평균 ${formatNumber(Math.round(costPerKm))}원으로 추정`, basis: "costPerKm" };
+          return { amount: Math.round(distance * costPerKm), reason: `${formatNumber(distance)} km × km당 평균 ${formatNumber(Math.round(costPerKm))}원으로 산출${gapNote}`, basis: "costPerKm" };
         }
         if (!unitPrice) return { amount: null, reason: "단가 기준이 없어요. 기준 유가를 직접 입력하거나 금액을 입력해 주세요." };
         return { amount: null, reason: "평균 연비를 계산할 기록이 부족해요. 공인연비 등록 또는 가득 주유 2회 기록 후 다시 시도해 주세요." };
@@ -1462,7 +1764,7 @@
         const amountInput = $("#entryAmount");
         if (!amountInput.value) {
           const liveEstimate = estimateFuelAmountFromMileage($("#entryMileage").value === "" ? NaN : $("#entryMileage").value, $("#entryVolume").value, editingId);
-          amountInput.placeholder = liveEstimate.amount ? `약 ${formatNumber(liveEstimate.amount)}원 (주유비 추정)` : "비우면 주유비 자동 추정";
+          amountInput.placeholder = liveEstimate.amount ? `약 ${formatNumber(liveEstimate.amount)}원 (산출 주유비)` : "비우면 산출 주유비 자동 기록";
         }
         const volume = Number($("#entryVolume").value);
         const amount = Number($("#entryAmount").value);
@@ -1511,6 +1813,56 @@
           : "공인연비 표기와 주유량·충전량 기록이 필요해요";
       }
 
+      function renderMonthlyChart() {
+        const chart = $("#monthlyChart");
+        if (!chart) return;
+        const now = new Date();
+        const buckets = [];
+        for (let offset = 5; offset >= 0; offset--) {
+          const date = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+          buckets.push({
+            key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`,
+            label: `${date.getMonth() + 1}월`,
+            current: offset === 0,
+            fuel: 0, service: 0, expense: 0, total: 0
+          });
+        }
+        const byKey = new Map(buckets.map((bucket) => [bucket.key, bucket]));
+        data.entries.forEach((entry) => {
+          const bucket = byKey.get(String(entry.date).slice(0, 7));
+          if (!bucket) return;
+          const amount = Number(entry.amount) || 0;
+          if (entry.type === "fuel") bucket.fuel += amount;
+          else if (entry.type === "service") bucket.service += amount;
+          else bucket.expense += amount;
+          bucket.total += amount;
+        });
+        const max = Math.max(...buckets.map((bucket) => bucket.total), 0);
+        const grandTotal = buckets.reduce((sum, bucket) => sum + bucket.total, 0);
+        const currentTotal = buckets[buckets.length - 1].total;
+        $("#monthlySubtitle").textContent = max > 0
+          ? `최근 6개월 합계 ${formatNumber(grandTotal)}원 · 이번 달 ${formatNumber(currentTotal)}원`
+          : "최근 6개월 주유·정비·유지비 흐름";
+        if (max <= 0) {
+          chart.innerHTML = `<div class="empty-state"><div class="empty-illustration" aria-hidden="true">▁▃▅</div><strong>표시할 지출 기록이 없어요</strong><p>내역을 기록하면 월별 흐름이 여기에 그려져요.</p></div>`;
+          return;
+        }
+        const compact = (value) => value >= 10000 ? `${(value / 10000).toFixed(value >= 100000 ? 0 : 1)}만` : formatNumber(value);
+        chart.innerHTML = buckets.map((bucket) => {
+          const barHeight = bucket.total > 0 ? Math.max(4, Math.round((bucket.total / max) * 100)) : 0;
+          const segment = (key, value) => value > 0
+            ? `<span class="monthly-seg ${key}" style="height:${(value / bucket.total * 100).toFixed(2)}%"></span>`
+            : "";
+          return `<div class="monthly-column${bucket.current ? " current" : ""}" title="${bucket.label} ${formatNumber(bucket.total)}원">
+            <div class="monthly-bar-area">
+              <div class="monthly-bar" style="height:${barHeight}%">${segment("fuel", bucket.fuel)}${segment("service", bucket.service)}${segment("expense", bucket.expense)}</div>
+            </div>
+            <strong class="monthly-value">${bucket.total > 0 ? compact(bucket.total) : "-"}</strong>
+            <span class="monthly-label">${bucket.label}</span>
+          </div>`;
+        }).join("");
+      }
+
       function renderEntries() {
         const filtered = data.entries
           .filter((entry) => activeFilter === "all" || entry.type === activeFilter)
@@ -1529,7 +1881,7 @@
             return sortNewestFirst ? -byDate : byDate;
           });
         const list = $("#entriesList");
-        $("#entryCount").textContent = `총 ${filtered.length}건`;
+        $("#entryCount").textContent = `총 ${filtered.length}건${filtered.some((entry) => entry.estimatedAmount) ? ` · 예측 ${filtered.filter((entry) => entry.estimatedAmount).length}건` : ""}`;
         $("#historySubtitle").textContent = `주유·정비·유지비 기록 ${data.entries.length}건을 모아봤어요.`;
         $("#sortButton").textContent = sortNewestFirst ? "최신순 ↓" : "오래된순 ↑";
         if (!filtered.length) {
@@ -1542,7 +1894,7 @@
           const isFuel = entry.type === "fuel";
           const isService = entry.type === "service";
           const title = isFuel
-            ? `${entry.fullTank ? "주유 · 가득 충전" : "주유"}${entry.estimatedAmount ? " · 추정" : ""}`
+            ? (entry.fullTank ? "주유 · 가득 충전" : "주유")
             : isService ? getServiceCategoryName(entry) : getExpenseCategoryName(entry);
           const fuelMetrics = isFuel ? calculateFuelMetrics(entry) : null;
           let tripDelta = "";
@@ -1556,6 +1908,7 @@
             formatDate(entry.date),
             entry.mileage != null ? `${formatNumber(entry.mileage)} km` : "",
             tripDelta,
+            entry.estimatedAmount && entry.estimateNote ? `산출 근거: ${entry.estimateNote}` : "",
             isFuel && entry.volume ? `${entry.volume} ${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             entry.station || entry.shop,
             entry.details,
@@ -1565,9 +1918,9 @@
           ].filter(Boolean).join(" · ");
           return `<article class="entry-item">
             <div class="entry-icon ${isService ? "service" : ""}" aria-hidden="true">${isFuel ? "⛽" : isService ? "🔧" : "＋"}</div>
-            <div><p class="entry-name">${escapeHtml(title)}</p><p class="entry-description">${escapeHtml(details || "추가 정보 없음")}</p></div>
+            <div><p class="entry-name">${escapeHtml(title)}${entry.estimatedAmount ? '<span class="entry-badge">예측</span>' : ""}</p><p class="entry-description">${escapeHtml(details || "추가 정보 없음")}</p></div>
             <div class="entry-right">
-              <div class="entry-amount"><strong>${formatNumber(entry.amount)}원</strong><span>${isFuel ? (entry.estimatedAmount ? "주유비(추정)" : "주유비") : isService ? "정비비" : "유지비"}</span></div>
+              <div class="entry-amount"><strong>${formatNumber(entry.amount)}원</strong><span>${isFuel ? (entry.estimatedAmount ? "예측 주유비" : "주유비") : isService ? "정비비" : "유지비"}</span></div>
               <div class="entry-actions">
                 <button class="icon-button" type="button" data-action="edit" data-id="${escapeHtml(entry.id)}" aria-label="${escapeHtml(title)} 내역 수정">✎</button>
                 <button class="icon-button delete" type="button" data-action="delete" data-id="${escapeHtml(entry.id)}" aria-label="${escapeHtml(title)} 내역 삭제">×</button>
@@ -1585,10 +1938,13 @@
         renderVehicleSelector();
         renderVehicle();
         renderSummary();
+        renderMonthlyChart();
         renderStations();
+        renderPlaces();
         renderConsumables();
         renderInspectionReminder();
         renderEntries();
+        renderSaveStatus();
       }
 
       function renderVehicleSelector() {
@@ -1607,6 +1963,8 @@
           localStorage.setItem(STORAGE_KEY, JSON.stringify(makeBackup(nextVehicles, selectedId)));
           vehicles = nextVehicles;
           activeVehicleId = selectedId;
+          meta.lastSavedAt = new Date().toISOString();
+          saveMeta();
           return true;
         } catch (error) {
           console.error("차량 목록을 저장하지 못했습니다.", error);
@@ -1632,7 +1990,7 @@
         const amountInput = $("#entryAmount");
         const isFuelType = type === "fuel";
         amountInput.required = !isFuelType;
-        amountInput.placeholder = isFuelType ? "비우면 주유비 자동 추정" : "0";
+        amountInput.placeholder = isFuelType ? "비우면 산출 주유비 자동 기록" : "0";
         $("#amountRequiredMark").classList.toggle("hidden", isFuelType);
         $("#fuelEstimateNote").classList.toggle("hidden", !isFuelType);
         updateServiceCategoryOptions();
@@ -1659,6 +2017,7 @@
         $("#submitEntryButton").textContent = "내역 저장";
         $("#cancelEditButton").classList.add("hidden");
         updateFuelMetrics();
+        syncFavoriteToggles();
       }
 
       function startEditing(id) {
@@ -1681,6 +2040,7 @@
         $("#entryHeading").textContent = "내역 수정";
         $("#submitEntryButton").textContent = "수정 내용 저장";
         $("#cancelEditButton").classList.remove("hidden");
+        if (entry.estimatedAmount) showToast("예측 주유비예요. 실제 금액을 입력하면 확정돼요.");
         $("#entryPanel").scrollIntoView({ behavior: "smooth", block: "start" });
         $("#entryAmount").focus({ preventScroll: true });
       }
@@ -1776,6 +2136,7 @@
           memo: $("#entryMemo").value.trim()
         };
         if (estimatedAmount) entry.estimatedAmount = true;
+        if (estimatedAmount) entry.estimateNote = estimateReason;
         if (type === "fuel" && volumeValue !== "") entry.volume = Number(volumeValue);
         if (type === "fuel") {
           entry.fuelKind = data.vehicle.fuel || "휘발유";
@@ -1980,6 +2341,11 @@
 
       $("#odometerQuickForm").addEventListener("submit", (event) => {
         event.preventDefault();
+        const dateRaw = $("#quickDateInput").value || localToday();
+        if (dateRaw > localToday()) {
+          showToast("날짜는 오늘 또는 과거로 입력해 주세요.", true);
+          return;
+        }
         const mileageRaw = $("#quickMileageInput").value;
         const amountRaw = $("#quickFuelAmountInput").value;
         if (mileageRaw === "" && amountRaw === "") {
@@ -2027,12 +2393,13 @@
         const entry = {
           id: crypto.randomUUID ? crypto.randomUUID() : `entry-${Date.now()}-${Math.random().toString(36).slice(2)}`,
           type: "fuel",
-          date: localToday(),
+          date: dateRaw,
           amount,
           mileage,
           memo: ""
         };
         if (estimated) entry.estimatedAmount = true;
+        if (estimated) entry.estimateNote = reason;
         entry.fuelKind = data.vehicle.fuel || "휘발유";
         entry.fuelUnit = data.vehicle.fuel === "전기" ? "kWh" : "L";
         entry.station = "";
@@ -2321,6 +2688,105 @@
         window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
 
+      function escapeIcsText(value) {
+        return String(value ?? "")
+          .replace(/\\/g, "\\\\")
+          .replace(/;/g, "\\;")
+          .replace(/,/g, "\\,")
+          .replace(/\r?\n/g, "\\n");
+      }
+
+      function foldIcsLine(line) {
+        const encoder = new TextEncoder();
+        if (encoder.encode(line).length <= 73) return [line];
+        const parts = [];
+        let current = "";
+        for (const character of line) {
+          if (encoder.encode(current + character).length > 73) {
+            parts.push(current);
+            current = " " + character;
+          } else {
+            current += character;
+          }
+        }
+        if (current) parts.push(current);
+        return parts;
+      }
+
+      function buildCalendarEvents() {
+        const vehicleName = data.vehicle.name || data.vehicle.plate || "내 차";
+        const averageKm = getMonthlyMileageAverage();
+        const events = [];
+        const inspection = data.vehicle.inspectionExpiry;
+        if (inspection && isValidDate(inspection)) {
+          events.push({
+            date: subtractDays(inspection, 31),
+            title: `${vehicleName} 정기검사 가능 시작`,
+            description: `정기검사 유효기간 시작일이에요. 만료일 ${formatDate(inspection)}까지 검사받으면 돼요.`,
+            alarmDays: null
+          });
+          events.push({
+            date: inspection,
+            title: `${vehicleName} 정기검사 만료`,
+            description: "정기검사 유효기간 마지막 날이에요. 지나면 과태료가 발생할 수 있어요.",
+            alarmDays: 30
+          });
+        }
+        const insurance = data.vehicle.insuranceExpiry;
+        if (insurance && isValidDate(insurance)) {
+          events.push({
+            date: insurance,
+            title: `${vehicleName} 자동차보험 만료`,
+            description: "보험 갱신일이에요. 미리 갱신해 주세요.",
+            alarmDays: 14
+          });
+        }
+        CONSUMABLES.filter((item) => isConsumableApplicable(item.id)).forEach((item) => {
+          const result = getConsumableStatus(item, getLatestConsumableChange(item.id), averageKm);
+          if (!result.expectedDate) return;
+          events.push({
+            date: result.expectedDate,
+            title: `${vehicleName} ${item.name} 교환`,
+            description: `예상 교환 시점이에요. (${result.detail})`,
+            alarmDays: 7
+          });
+        });
+        return events;
+      }
+
+      function buildIcsCalendar(events = buildCalendarEvents()) {
+        if (!events.length) return null;
+        const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+        const lines = [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "PRODID:-//Chagibu//Car Ledger//KO",
+          "CALSCALE:GREGORIAN",
+          "METHOD:PUBLISH",
+          `X-WR-CALNAME:${escapeIcsText(`${data.vehicle.name || "내 차"} 차계부 일정`)}`
+        ];
+        events.forEach((event, index) => {
+          const end = subtractDays(event.date, -1);
+          lines.push("BEGIN:VEVENT");
+          lines.push(`UID:chagibu-${activeVehicleId}-${event.date}-${index}@chagibu.local`);
+          lines.push(`DTSTAMP:${stamp}`);
+          lines.push(`DTSTART;VALUE=DATE:${event.date.replace(/-/g, "")}`);
+          lines.push(`DTEND;VALUE=DATE:${end.replace(/-/g, "")}`);
+          lines.push(`SUMMARY:${escapeIcsText(event.title)}`);
+          lines.push(`DESCRIPTION:${escapeIcsText(event.description)}`);
+          if (event.alarmDays != null) {
+            lines.push("BEGIN:VALARM");
+            lines.push(`TRIGGER:-P${event.alarmDays}D`);
+            lines.push("ACTION:DISPLAY");
+            lines.push(`DESCRIPTION:${escapeIcsText(event.title)}`);
+            lines.push("END:VALARM");
+          }
+          lines.push("END:VEVENT");
+        });
+        lines.push("END:VCALENDAR");
+        return lines.flatMap(foldIcsLine).join("\r\n") + "\r\n";
+      }
+
       function buildTextExport() {
         const fuelDistanceEstimate = getFuelDistanceEstimate();
         const totals = data.entries.reduce((result, entry) => {
@@ -2395,15 +2861,16 @@
           const metrics = fuel ? calculateFuelMetrics(entry) : null;
           const fields = [
             entry.date,
-            fuel ? `주유 (${entry.fuelKind || data.vehicle.fuel || "휘발유"})${entry.fullTank ? " · 가득 충전" : ""}${entry.estimatedAmount ? " · 금액추정" : ""}` : entry.type === "service" ? getServiceCategoryName(entry) : getExpenseCategoryName(entry),
-            `${formatNumber(entry.amount)}원${entry.estimatedAmount ? "(추정)" : ""}`,
+            fuel ? `주유 (${entry.fuelKind || data.vehicle.fuel || "휘발유"})${entry.fullTank ? " · 가득 충전" : ""}${entry.estimatedAmount ? " · 예측" : ""}` : entry.type === "service" ? getServiceCategoryName(entry) : getExpenseCategoryName(entry),
+            `${formatNumber(entry.amount)}원${entry.estimatedAmount ? "(예측)" : ""}`,
             entry.volume ? `${entry.volume} ${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             entry.mileage != null ? `${formatNumber(entry.mileage)} km` : "",
             metrics?.efficiency ? `${metrics.efficiency.toFixed(1)} km/${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             metrics?.unitPrice ? `${formatNumber(Math.round(metrics.unitPrice))}원/${entry.fuelUnit || (entry.fuelKind === "전기" ? "kWh" : "L")}` : "",
             entry.station ? `주유소/충전소 ${entry.station}` : entry.shop ? `정비소 ${entry.shop}` : "",
             entry.details || "",
-            entry.memo || ""
+            entry.memo || "",
+            entry.estimatedAmount && entry.estimateNote ? `산출 근거: ${entry.estimateNote}` : ""
           ].filter(Boolean);
           lines.push(`- ${fields.join(" | ")}`);
         });
@@ -2424,7 +2891,23 @@
       $("#exportButton").addEventListener("click", () => {
         const timestamp = new Date().toISOString().slice(0, 10);
         downloadJson(`차계부-전체차량-백업-${timestamp}.json`, JSON.stringify(makeBackup(), null, 2));
+        meta.lastBackupAt = new Date().toISOString();
+        saveMeta();
+        renderSaveStatus();
         showToast("전체 차량의 복원용 JSON 백업 파일을 내려받았어요.");
+      });
+
+      $("#icsExportButton").addEventListener("click", () => {
+        const events = buildCalendarEvents();
+        if (!events.length) {
+          showToast("내보낼 일정이 없어요. 검사·보험 만료일이나 소모품 교환 기록을 먼저 넣어 주세요.", true);
+          return;
+        }
+        const timestamp = new Date().toISOString().slice(0, 10);
+        const calendar = buildIcsCalendar(events);
+        downloadBlob(`차계부-${data.vehicle.name || "차량"}-일정-${timestamp}.ics`,
+          new Blob([calendar], { type: "text/calendar;charset=utf-8" }));
+        showToast(`검사·보험·소모품 일정 ${events.length}건을 캘린더 파일로 저장했어요. 폰 캘린더 앱에서 열어 주세요.`);
       });
 
       $("#textExportButton").addEventListener("click", () => {
@@ -2506,6 +2989,7 @@
       dateInput.value = localToday();
       dateInput.max = localToday();
       setEntryType("fuel");
+      bindPlaceFields();
       render();
       renderRecoveryState();
     })();
